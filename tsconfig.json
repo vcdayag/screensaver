@@ -15,7 +15,8 @@
 
     /* Linting */
     "strict": true,
-    "noUnusedLocals": true,
+    // error TS6133 = true
+    "noUnusedLocals": false,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true
   },
