@@ -77,12 +77,10 @@ function drawParts(gl: WebGL2RenderingContext, vertices: Array<number>, glmode: 
   gl.drawArrays(glmode, 0, count);
 }
 
-import kyub from './cube.obj?raw';
-function useLibrary() {
 
-
+function useLibrary(object: string) {
   // compile the shaders and create a shader program
-  var m = new OBJ.Mesh(kyub);
+  var m = new OBJ.Mesh(object);
 
   var vertexPositionAttribute = gl.getAttribLocation(program, "a_position");
   gl.enableVertexAttribArray(vertexPositionAttribute);
@@ -98,6 +96,7 @@ function useLibrary() {
   // var PROJECTION_ARRAY = CONST_PROJECTION_ARRAY;
 
   var modelMatrix = mat4.create();
+  mat4.scale(modelMatrix,modelMatrix,[5,5,5]);
   var projectionMatrix = mat4.create();
   mat4.ortho(projectionMatrix, -10, 10, -10, 10, -10, 10);
   var viewMatrix = mat4.create();
@@ -178,4 +177,8 @@ gl.useProgram(program);
 // }
 // drawParts(gl, newcube, gl.TRIANGLE_FAN, [0, 0.5, 0.5, 0.5]);
 
-useLibrary();
+// import kyub from './objects/cube.obj?raw';
+// useLibrary(kyub);
+
+import gourd from './objects/gourd.obj?raw';
+useLibrary(gourd);
