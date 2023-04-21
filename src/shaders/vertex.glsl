@@ -1,6 +1,6 @@
 #version 300 es
 in vec4 a_position;
-in float a_point_size;
+// in float a_point_size;
 // uniform mat4 u_transformation_matrix;
 uniform mat4 u_model_matrix;
 uniform mat4 u_view_matrix;
@@ -11,7 +11,7 @@ uniform mat4 u_projection_matrix;
 // uniform vec3 u_light_diffuse;
 // uniform vec3 u_material_diffuse;
 
-in vec4 a_color; //attribute vec4 a_color;
+// in vec4 a_color; //attribute vec4 a_color;
 out vec4 v_color; //varying vec4 v_color;
 
 void main() {
@@ -19,9 +19,11 @@ void main() {
     // gl_Position = u_projection_matrix * u_transformation_matrix * u_view_matrix * u_model_matrix * a_position;
     gl_Position = u_projection_matrix * u_view_matrix * u_model_matrix * a_position;
     // gl_Position = a_position;
-    gl_PointSize = a_point_size;
+    // gl_PointSize = a_point_size;
+    gl_PointSize = 0.0;
 
-    v_color = a_color;
+    // v_color = a_color;
+    v_color = vec4(0,0,1,0);
 
     // vec3 corrected_a_normal = vec3(gl_Position * vec4(a_normal, 1.0));
     // vec3 normalized_a_normal = normalize(corrected_a_normal);
