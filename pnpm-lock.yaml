@@ -4,6 +4,9 @@ dependencies:
   gl-matrix:
     specifier: ^3.4.3
     version: 3.4.3
+  webgl-obj-loader:
+    specifier: ^2.0.8
+    version: 2.0.8
 
 devDependencies:
   typescript:
@@ -324,3 +327,7 @@ packages:
     optionalDependencies:
       fsevents: 2.3.2
     dev: true
+
+  /webgl-obj-loader@2.0.8:
+    resolution: {integrity: sha512-5QoPMU437sJ5k/x9Z4ZJt/V0vQD7gNsPv38EwAhUbm9L85VPWK6RN88aI1KlbBGz8cj3OCkcLqqQcahZTy78QQ==}
+    dev: false
