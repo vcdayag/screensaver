@@ -3,7 +3,6 @@ import vertexShaderSourceCode from './shaders/vertex.glsl?raw';
 import fragmentShaderSourceCode from './shaders/fragment.glsl?raw';
 import { mat4 } from 'gl-matrix';
 import { OBJ } from 'webgl-obj-loader';
-import { Cubevertices } from './cube.ts';
 
 function createShader(gl: WebGLRenderingContext, type: number, sourceCode: string): WebGLShader {
   // Compiles either a shader of type gl.VERTEX_SHADER or gl.FRAGMENT_SHADER
@@ -168,14 +167,6 @@ if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
 
 // set the program created earlier
 gl.useProgram(program);
-
-// let newcube = [];
-// for (let index = 0; index < Cubevertices.length; index++) {
-//   for (let a = 0; a < Cubevertices[index].length; a++) {
-//     newcube.push(Cubevertices[index][a] - .5);
-//   }
-// }
-// drawParts(gl, newcube, gl.TRIANGLE_FAN, [0, 0.5, 0.5, 0.5]);
 
 // import kyub from './objects/cube.obj?raw';
 // useLibrary(kyub);
