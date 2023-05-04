@@ -186,21 +186,50 @@ useLibrary(gourd);
 
 
 // Catch user inputs
-
+let animate = 0;
+let direction = 0;
 const handleUserKeyPress = (event: KeyboardEvent) => {
-  const { key } = event
+  const { key } = event;
+  console.log(key);
   switch (key) {
     case "ArrowUp":
-      mat4.translate(modelMatrix, modelMatrix, [0, 0.2, 0]);
+      // mat4.translate(modelMatrix, modelMatrix, [0, 0.2, 0]);
+      direction = 0;
       break;
     case "ArrowDown":
-      mat4.translate(modelMatrix, modelMatrix, [0, -0.2, 0]);
+      // mat4.translate(modelMatrix, modelMatrix, [0, -0.2, 0]);
+      direction = 1;
       break;
     case "ArrowLeft":
-      mat4.translate(modelMatrix, modelMatrix, [-0.2, 0, 0]);
+      // mat4.translate(modelMatrix, modelMatrix, [-0.2, 0, 0]);
+      direction = 2;
       break;
     case "ArrowRight":
-      mat4.translate(modelMatrix, modelMatrix, [0.2, 0, 0]);
+      // mat4.translate(modelMatrix, modelMatrix, [0.2, 0, 0]);
+      break;
+    case "Escape":
+      clearInterval(animate);
+      break;
+    case " ":
+      clearInterval(animate);
+      animate = setInterval(() => {
+        switch (direction) {
+          case 0:
+            mat4.rotateX(modelMatrix, modelMatrix, Math.PI / 4);
+            break;
+          case 1:
+            mat4.rotateY(modelMatrix, modelMatrix, -Math.PI / 4);
+            break;
+          case 2:
+            mat4.rotateZ(modelMatrix, modelMatrix, -Math.PI / 4);
+            break;
+
+          default:
+            break;
+        }
+
+        useLibrary(gourd);
+      }, 100);
       break;
     default:
       break;
