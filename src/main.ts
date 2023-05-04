@@ -184,9 +184,14 @@ function useLibrary(object: string) {
 
 useLibrary(gourd);
 
+const requestAnimationFrame =
+  window.requestAnimationFrame
+const cancelAnimationFrame =
+  window.cancelAnimationFrame
+
+let animation: number;
 
 // Catch user inputs
-let animate = 0;
 let direction = 0;
 const handleUserKeyPress = (event: KeyboardEvent) => {
   const { key } = event;
@@ -208,33 +213,31 @@ const handleUserKeyPress = (event: KeyboardEvent) => {
       // mat4.translate(modelMatrix, modelMatrix, [0.2, 0, 0]);
       break;
     case "Escape":
-      clearInterval(animate);
+      cancelAnimationFrame(animation);
       break;
     case " ":
-      clearInterval(animate);
-      animate = setInterval(() => {
-        switch (direction) {
-          case 0:
-            mat4.rotateX(modelMatrix, modelMatrix, Math.PI / 4);
-            break;
-          case 1:
-            mat4.rotateY(modelMatrix, modelMatrix, -Math.PI / 4);
-            break;
-          case 2:
-            mat4.rotateZ(modelMatrix, modelMatrix, -Math.PI / 4);
-            break;
-
-          default:
-            break;
-        }
-
-        useLibrary(gourd);
-      }, 100);
-      break;
-    default:
-      break;
+      requestAnimate();
   }
-  useLibrary(gourd);
+
+  function requestAnimate() {
+    let rotatevalue = (Math.PI / 64);
+    switch (direction) {
+      case 0:
+        mat4.rotateX(modelMatrix, modelMatrix, rotatevalue);
+        break;
+      case 1:
+        mat4.rotateY(modelMatrix, modelMatrix, rotatevalue);
+        break;
+      case 2:
+        mat4.rotateZ(modelMatrix, modelMatrix, rotatevalue);
+        break;
+
+      default:
+        break;
+    }
+    useLibrary(gourd);
+    animation = requestAnimationFrame(requestAnimate);
+  }
 }
 
 window.addEventListener('keydown', handleUserKeyPress);
