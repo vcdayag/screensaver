@@ -113,29 +113,31 @@ gl.enable(gl.DEPTH_TEST);
 
 
 const CONST_VIEWS: vec3by3 = [0, 0, 0, 0, 0, -1, 0, 1, 0];
-var VIEWS: vec3by3 = CONST_VIEWS;
+let VIEWS: vec3by3 = CONST_VIEWS;
 
 const CONST_PROJECTION_ARRAY: vec2by3 = [-10, 10, -10, 10, -10, 10];
-var PROJECTION_ARRAY: vec2by3 = CONST_PROJECTION_ARRAY;
+let PROJECTION_ARRAY: vec2by3 = CONST_PROJECTION_ARRAY;
+
+let projectionMatrix = mat4.create();
+let viewMatrix = mat4.create();
+let modelMatrix = mat4.create();
 
 function useLibrary(object: string) {
   // compile the shaders and create a shader program
   var m = new OBJ.Mesh(object);
 
-
-
-  var projectionMatrix = mat4.create();
+  projectionMatrix = mat4.create();
   mat4.ortho(projectionMatrix, ...PROJECTION_ARRAY);
 
-  var viewMatrix = mat4.create();
+  viewMatrix = mat4.create();
   mat4.lookAt(viewMatrix, new Float32Array(VIEWS.slice(0, 3)), new Float32Array(VIEWS.slice(3, 6)), new Float32Array(VIEWS.slice(6, 9)));
 
-  var modelMatrix = mat4.create();
-  mat4.scale(modelMatrix, modelMatrix, [5, 5, 5]);
-  // var modelMatrix = glMatrix.mat4.create();
-  mat4.rotateX(modelMatrix, modelMatrix, Math.PI / 4);
-  // glMatrix.mat4.rotateY(modelMatrix, modelMatrix, Math.PI);
-  mat4.rotateZ(modelMatrix, modelMatrix, Math.PI / 4);
+  // modelMatrix = mat4.create();
+  // mat4.scale(modelMatrix, modelMatrix, [5, 5, 5]);
+  // // var modelMatrix = glMatrix.mat4.create();
+  // mat4.rotateX(modelMatrix, modelMatrix, Math.PI / 4);
+  // // glMatrix.mat4.rotateY(modelMatrix, modelMatrix, Math.PI);
+  // mat4.rotateZ(modelMatrix, modelMatrix, Math.PI / 4);
 
   gl.uniformMatrix4fv(uModelMatrixPointer, false, new Float32Array(modelMatrix));
   gl.uniformMatrix4fv(uViewMatrixPointer, false, new Float32Array(viewMatrix));
@@ -181,3 +183,29 @@ function useLibrary(object: string) {
 // useLibrary(kyub);
 
 useLibrary(gourd);
+
+
+// Catch user inputs
+
+const handleUserKeyPress = (event: KeyboardEvent) => {
+  const { key } = event
+  switch (key) {
+    case "ArrowUp":
+      mat4.translate(modelMatrix, modelMatrix, [0, 0.2, 0]);
+      break;
+    case "ArrowDown":
+      mat4.translate(modelMatrix, modelMatrix, [0, -0.2, 0]);
+      break;
+    case "ArrowLeft":
+      mat4.translate(modelMatrix, modelMatrix, [-0.2, 0, 0]);
+      break;
+    case "ArrowRight":
+      mat4.translate(modelMatrix, modelMatrix, [0.2, 0, 0]);
+      break;
+    default:
+      break;
+  }
+  useLibrary(gourd);
+}
+
+window.addEventListener('keydown', handleUserKeyPress);
