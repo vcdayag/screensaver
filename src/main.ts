@@ -179,7 +179,7 @@ function useLibrary(object: string) {
 }
 
 
-// import kyub from './objects/cube.obj?raw';
+import kyub from './objects/cube.obj?raw';
 // useLibrary(kyub);
 
 useLibrary(gourd);
@@ -190,13 +190,19 @@ const cancelAnimationFrame =
   window.cancelAnimationFrame
 
 let animation: number;
-
+let model: string = gourd;
 // Catch user inputs
 let direction = 0;
 const handleUserKeyPress = (event: KeyboardEvent) => {
   const { key } = event;
   console.log(key);
   switch (key) {
+    case "1":
+      model = gourd;
+      break;
+    case "2":
+      model = kyub;
+      break;
     case "ArrowUp":
       // mat4.translate(modelMatrix, modelMatrix, [0, 0.2, 0]);
       direction = 0;
@@ -219,25 +225,29 @@ const handleUserKeyPress = (event: KeyboardEvent) => {
       requestAnimate();
   }
 
-  function requestAnimate() {
-    let rotatevalue = (Math.PI / 64);
-    switch (direction) {
-      case 0:
-        mat4.rotateX(modelMatrix, modelMatrix, rotatevalue);
-        break;
-      case 1:
-        mat4.rotateY(modelMatrix, modelMatrix, rotatevalue);
-        break;
-      case 2:
-        mat4.rotateZ(modelMatrix, modelMatrix, rotatevalue);
-        break;
+  useLibrary(model);
 
-      default:
-        break;
-    }
-    useLibrary(gourd);
-    animation = requestAnimationFrame(requestAnimate);
+
+}
+
+function requestAnimate() {
+  let rotatevalue = (Math.PI / 64);
+  switch (direction) {
+    case 0:
+      mat4.rotateX(modelMatrix, modelMatrix, rotatevalue);
+      break;
+    case 1:
+      mat4.rotateY(modelMatrix, modelMatrix, rotatevalue);
+      break;
+    case 2:
+      mat4.rotateZ(modelMatrix, modelMatrix, rotatevalue);
+      break;
+
+    default:
+      break;
   }
+  useLibrary(model);
+  animation = requestAnimationFrame(requestAnimate);
 }
 
 window.addEventListener('keydown', handleUserKeyPress);
