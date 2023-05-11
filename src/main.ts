@@ -7,6 +7,8 @@ import { vec2by3, vec3by3 } from './types';
 
 // objects
 import gourd from './objects/gourd.obj?raw';
+import icecream from './objects/icecream.obj?raw';
+
 
 // function drawParts(gl: WebGL2RenderingContext, vertices: Array<number>, glmode: number, colors: Array<number>) {
 //   // Declaration of pointers to the attributes
@@ -75,8 +77,8 @@ function createShader(gl: WebGLRenderingContext, type: number, sourceCode: strin
 }
 
 let canvas = document.querySelector<HTMLCanvasElement>('#screensaver')!;
-canvas.height = 360;
-canvas.width = 360;
+canvas.height = 720;
+canvas.width = 720;
 
 const gl = canvas.getContext('webgl2')!;
 let program = gl.createProgram()!;
@@ -107,6 +109,8 @@ const uViewMatrixPointer = gl.getUniformLocation(program, "u_view_matrix");
 const uProjectionMatrixPointer = gl.getUniformLocation(program, "u_projection_matrix");
 
 const vertexPositionAttribute = gl.getAttribLocation(program, "a_position");
+const textureCoordAttribute = gl.getAttribLocation(program, "a_color");
+
 gl.enableVertexAttribArray(vertexPositionAttribute);
 
 gl.enable(gl.DEPTH_TEST);
@@ -115,7 +119,7 @@ gl.enable(gl.DEPTH_TEST);
 const CONST_VIEWS: vec3by3 = [0, 0, 0, 0, 0, -1, 0, 1, 0];
 let VIEWS: vec3by3 = CONST_VIEWS;
 
-const CONST_PROJECTION_ARRAY: vec2by3 = [-10, 10, -10, 10, -10, 10];
+const CONST_PROJECTION_ARRAY: vec2by3 = [-5, 5, -5, 5, -5, 5];
 let PROJECTION_ARRAY: vec2by3 = CONST_PROJECTION_ARRAY;
 
 let projectionMatrix = mat4.create();
@@ -169,20 +173,21 @@ function useLibrary(object: string) {
   // gl.bindBuffer(gl.ARRAY_BUFFER, mesh.normalBuffer);
   // gl.vertexAttribPointer(vertexNormalAttribute, mesh.normalBuffer.itemSize, gl.FLOAT, false, 0, 0);
 
+  gl.vertexAttrib4f(textureCoordAttribute, 0.4, 0.2, 0, 1);
+
   gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, mesh.indexBuffer);
-
-  gl.clearColor(0, 0, 0, 1.0);
-  gl.clear(gl.COLOR_BUFFER_BIT);
-
-
   gl.drawElements(gl.TRIANGLES, mesh.indexBuffer.numItems, gl.UNSIGNED_SHORT, 0);
+  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
 }
 
 
 import kyub from './objects/cube.obj?raw';
 // useLibrary(kyub);
 
-useLibrary(gourd);
+gl.clearColor(0.1, 0.6, 0.5, 1.0);
+gl.clear(gl.COLOR_BUFFER_BIT);
+
+useLibrary(icecream);
 
 const requestAnimationFrame =
   window.requestAnimationFrame
