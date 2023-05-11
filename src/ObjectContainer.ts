@@ -1,6 +1,10 @@
 import { mat4 } from "gl-matrix";
 import { MeshWithBuffers, OBJ } from "webgl-obj-loader";
 
+function getRandom(value: number){
+    return (Math.random() < 0.5 ? -1 : 1) * Math.random()*value;
+}
+
 export class ObjectContainer {
     gl: WebGLRenderingContext;
     mesh: MeshWithBuffers;
@@ -10,6 +14,7 @@ export class ObjectContainer {
       this.gl = gl;
       this.mesh = OBJ.initMeshBuffers(gl, new OBJ.Mesh(objectString));
       this.modelMatrix = mat4.create();
+      mat4.translate(this.modelMatrix, this.modelMatrix, [getRandom(5), getRandom(5), getRandom(5)]);
     }
 
     rotateX(rotateValue: number){
