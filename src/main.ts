@@ -2,7 +2,6 @@ import './style.css'
 import vertexShaderSourceCode from './shaders/vertex.glsl?raw';
 import fragmentShaderSourceCode from './shaders/fragment.glsl?raw';
 import { mat4 } from 'gl-matrix';
-import { OBJ } from 'webgl-obj-loader';
 import { vec2by3, vec3by3 } from './types';
 
 // objects
@@ -45,11 +44,6 @@ if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
 // set the program created earlier
 gl.useProgram(program);
 
-// const aPositionPointer = gl.getAttribLocation(program, 'a_position');
-// const aPointSizePointer = gl.getAttribLocation(program, 'a_point_size');
-// const colorLocation = gl.getAttribLocation(program, "a_color");
-
-
 const uModelMatrixPointer = gl.getUniformLocation(program, "u_model_matrix");
 const uViewMatrixPointer = gl.getUniformLocation(program, "u_view_matrix");
 const uProjectionMatrixPointer = gl.getUniformLocation(program, "u_projection_matrix");
@@ -68,23 +62,13 @@ let PROJECTION_ARRAY: vec2by3 = CONST_PROJECTION_ARRAY;
 
 let projectionMatrix = mat4.create();
 let viewMatrix = mat4.create();
-let modelMatrix = mat4.create();
 mat4.ortho(projectionMatrix, ...PROJECTION_ARRAY);
 mat4.lookAt(viewMatrix, new Float32Array(VIEWS.slice(0, 3)), new Float32Array(VIEWS.slice(3, 6)), new Float32Array(VIEWS.slice(6, 9)));
 gl.uniformMatrix4fv(uViewMatrixPointer, false, new Float32Array(viewMatrix));
 gl.uniformMatrix4fv(uProjectionMatrixPointer, false, new Float32Array(projectionMatrix));
 
 function renderObject(object: ObjectContainer) {
-  // compile the shaders and create a shader program
-  // projectionMatrix = mat4.create();
-  // mat4.ortho(projectionMatrix, ...PROJECTION_ARRAY);
-
-  // viewMatrix = mat4.create();
-  // mat4.lookAt(viewMatrix, new Float32Array(VIEWS.slice(0, 3)), new Float32Array(VIEWS.slice(3, 6)), new Float32Array(VIEWS.slice(6, 9)));
-
   gl.uniformMatrix4fv(uModelMatrixPointer, false, new Float32Array(object.modelMatrix));
-  // gl.uniformMatrix4fv(uViewMatrixPointer, false, new Float32Array(viewMatrix));
-  // gl.uniformMatrix4fv(uProjectionMatrixPointer, false, new Float32Array(projectionMatrix));
 
   // now to render the mesh
   gl.bindBuffer(gl.ARRAY_BUFFER, object.mesh.vertexBuffer);
@@ -92,6 +76,35 @@ function renderObject(object: ObjectContainer) {
 
   gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, object.mesh.indexBuffer);
   gl.drawElements(gl.TRIANGLES, object.mesh.indexBuffer.numItems, gl.UNSIGNED_SHORT, 0);
+}
+
+function renderAll(objarray: ObjectContainer[]) {
+  //clear screen
+  gl.clearColor(0, 0, 0, 1.0);
+  gl.clear(gl.COLOR_BUFFER_BIT);
+
+  // render objects
+  for (let index = 0; index < objarray.length; index++) {
+    let rotatevalue = (Math.PI / 64) + index * 100;
+    const element = objarray[index];
+    switch (direction) {
+      case 0:
+        element.rotateX(rotatevalue);
+        break;
+      case 1:
+        element.rotateY(rotatevalue);
+        break;
+      case 2:
+        element.rotateZ(rotatevalue);
+        break;
+
+      default:
+        break;
+    }
+
+    renderObject(element);
+
+  }
 }
 
 import { ObjectContainer } from './ObjectContainer';
@@ -115,19 +128,15 @@ const handleUserKeyPress = (event: KeyboardEvent) => {
   console.log(key);
   switch (key) {
     case "ArrowUp":
-      // mat4.translate(modelMatrix, modelMatrix, [0, 0.2, 0]);
       direction = 0;
       break;
     case "ArrowDown":
-      // mat4.translate(modelMatrix, modelMatrix, [0, -0.2, 0]);
       direction = 1;
       break;
     case "ArrowLeft":
-      // mat4.translate(modelMatrix, modelMatrix, [-0.2, 0, 0]);
       direction = 2;
       break;
     case "ArrowRight":
-      // mat4.translate(modelMatrix, modelMatrix, [0.2, 0, 0]);
       break;
     case "Escape":
       cancelAnimationFrame(animation);
@@ -141,33 +150,7 @@ const handleUserKeyPress = (event: KeyboardEvent) => {
 }
 
 function requestAnimate() {
-
-  //clear screen
-  gl.clearColor(0, 0, 0, 1.0);
-  gl.clear(gl.COLOR_BUFFER_BIT);
-
-  // render objects
-  for (let index = 0; index < ObjectList.length; index++) {
-    let rotatevalue = (Math.PI / 64) + index * 100;
-    const element = ObjectList[index];
-    switch (direction) {
-      case 0:
-        element.rotateX(rotatevalue);
-        break;
-      case 1:
-        element.rotateY(rotatevalue);
-        break;
-      case 2:
-        element.rotateZ(rotatevalue);
-        break;
-
-      default:
-        break;
-    }
-    renderObject(element);
-
-  }
-
+  renderAll(ObjectList);
   // recursive call
   animation = requestAnimationFrame(requestAnimate);
 }
