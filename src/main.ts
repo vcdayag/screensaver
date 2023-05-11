@@ -7,59 +7,7 @@ import { vec2by3, vec3by3 } from './types';
 
 // objects
 import gourd from './objects/gourd.obj?raw';
-
-// function drawParts(gl: WebGL2RenderingContext, vertices: Array<number>, glmode: number, colors: Array<number>) {
-//   // Declaration of pointers to the attributes
-
-//   // helper function to draw each part of the parakeet
-//   const CONST_VIEWS = [0, 0, 0, 0, 0, -1, 0, 1, 0];
-//   // const CONST_PROJECTION_ARRAY = [-10, 10, -10, 10, -10, 10];
-
-//   var VIEWS = CONST_VIEWS;
-//   // var PROJECTION_ARRAY = CONST_PROJECTION_ARRAY;
-
-//   var modelMatrix = mat4.create();
-//   var projectionMatrix = mat4.create();
-//   mat4.ortho(projectionMatrix, -10, 10, -10, 10, -10, 10);
-//   var viewMatrix = mat4.create();
-//   mat4.lookAt(viewMatrix, new Float32Array(VIEWS.slice(0, 3)), new Float32Array(VIEWS.slice(3, 6)), new Float32Array(VIEWS.slice(6, 9)));
-//   // var modelMatrix = glMatrix.mat4.create();
-//   mat4.rotateX(modelMatrix, modelMatrix, Math.PI / 4);
-//   // glMatrix.mat4.rotateY(modelMatrix, modelMatrix, Math.PI);
-//   mat4.rotateZ(modelMatrix, modelMatrix, Math.PI / 4);
-
-//   // clear and make background black
-//   gl.clearColor(0, 0, 0, 1.0);
-//   gl.clear(gl.COLOR_BUFFER_BIT);
-//   gl.enable(gl.DEPTH_TEST);
-
-//   let vertWithColors = [];
-//   for (let index = 0; index < vertices.length / 4; index++) {
-//     const offset = 4;
-//     const start = index * offset;
-//     const end = (index + 1) * offset;
-
-//     vertWithColors.push(...vertices.slice(start, end));
-//     vertWithColors.push(...colors);
-//   }
-
-//   var vertexBuffer = gl.createBuffer();
-//   gl.vertexAttrib1f(aPointSizePointer, 10);
-//   gl.enableVertexAttribArray(aPositionPointer);
-//   gl.enableVertexAttribArray(colorLocation);
-//   gl.uniformMatrix4fv(uModelMatrixPointer, false, new Float32Array(modelMatrix));
-//   gl.uniformMatrix4fv(uViewMatrixPointer, false, new Float32Array(viewMatrix));
-//   gl.uniformMatrix4fv(uProjectionMatrixPointer, false, new Float32Array(projectionMatrix));
-
-//   gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
-//   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertWithColors), gl.STATIC_DRAW);
-//   gl.vertexAttribPointer(aPositionPointer, 4, gl.FLOAT, false, 8 * 4, 0);
-//   gl.vertexAttribPointer(colorLocation, 4, gl.FLOAT, false, 8 * 4, 4 * 4);
-
-//   var count = vertices.length / 4;
-//   gl.drawArrays(glmode, 0, count);
-// }
-
+import kyub from './objects/cube.obj?raw';
 
 function createShader(gl: WebGLRenderingContext, type: number, sourceCode: string): WebGLShader {
   // Compiles either a shader of type gl.VERTEX_SHADER or gl.FRAGMENT_SHADER
@@ -115,74 +63,34 @@ gl.enable(gl.DEPTH_TEST);
 const CONST_VIEWS: vec3by3 = [0, 0, 0, 0, 0, -1, 0, 1, 0];
 let VIEWS: vec3by3 = CONST_VIEWS;
 
-const CONST_PROJECTION_ARRAY: vec2by3 = [-10, 10, -10, 10, -10, 10];
+const CONST_PROJECTION_ARRAY: vec2by3 = [-10, 10, -10, 10, -10, 100];
 let PROJECTION_ARRAY: vec2by3 = CONST_PROJECTION_ARRAY;
 
 let projectionMatrix = mat4.create();
 let viewMatrix = mat4.create();
 let modelMatrix = mat4.create();
 
-function useLibrary(object: string) {
+function useObjectContainer(object: ObjectContainer) {
   // compile the shaders and create a shader program
-  var m = new OBJ.Mesh(object);
-
   projectionMatrix = mat4.create();
   mat4.ortho(projectionMatrix, ...PROJECTION_ARRAY);
 
   viewMatrix = mat4.create();
   mat4.lookAt(viewMatrix, new Float32Array(VIEWS.slice(0, 3)), new Float32Array(VIEWS.slice(3, 6)), new Float32Array(VIEWS.slice(6, 9)));
 
-  // modelMatrix = mat4.create();
-  // mat4.scale(modelMatrix, modelMatrix, [5, 5, 5]);
-  // // var modelMatrix = glMatrix.mat4.create();
-  // mat4.rotateX(modelMatrix, modelMatrix, Math.PI / 4);
-  // // glMatrix.mat4.rotateY(modelMatrix, modelMatrix, Math.PI);
-  // mat4.rotateZ(modelMatrix, modelMatrix, Math.PI / 4);
-
-  gl.uniformMatrix4fv(uModelMatrixPointer, false, new Float32Array(modelMatrix));
+  gl.uniformMatrix4fv(uModelMatrixPointer, false, new Float32Array(object.modelMatrix));
   gl.uniformMatrix4fv(uViewMatrixPointer, false, new Float32Array(viewMatrix));
   gl.uniformMatrix4fv(uProjectionMatrixPointer, false, new Float32Array(projectionMatrix));
 
-  // create and initialize the vertex, vertex normal, and texture coordinate buffers
-  // and save on to the mesh object
-  let mesh = OBJ.initMeshBuffers(gl, m);
-
   // now to render the mesh
-  gl.bindBuffer(gl.ARRAY_BUFFER, mesh.vertexBuffer);
-  gl.vertexAttribPointer(vertexPositionAttribute, mesh.vertexBuffer.itemSize, gl.FLOAT, false, 0, 0);
+  gl.bindBuffer(gl.ARRAY_BUFFER, object.mesh.vertexBuffer);
+  gl.vertexAttribPointer(vertexPositionAttribute, object.mesh.vertexBuffer.itemSize, gl.FLOAT, false, 0, 0);
 
-  // it's possible that the mesh doesn't contain
-  // any texture coordinates (e.g. suzanne.obj in the development branch).
-  // in this case, the texture vertexAttribArray will need to be disabled
-  // before the call to drawElements
-  // if(!mesh.textures.length){
-  //   gl.disableVertexAttribArray(program.textureCoordAttribute);
-  // }
-  // else{
-  //   // if the texture vertexAttribArray has been previously
-  //   // disabled, then it needs to be re-enabled
-  //   gl.enableVertexAttribArray(program.textureCoordAttribute);
-  //   gl.bindBuffer(gl.ARRAY_BUFFER, mesh.);
-  //   gl.vertexAttribPointer(program.textureCoordAttribute, mesh.textureBuffer.itemSize, gl.FLOAT, false, 0, 0);
-  // }
-
-  // gl.bindBuffer(gl.ARRAY_BUFFER, mesh.normalBuffer);
-  // gl.vertexAttribPointer(vertexNormalAttribute, mesh.normalBuffer.itemSize, gl.FLOAT, false, 0, 0);
-
-  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, mesh.indexBuffer);
-
-  gl.clearColor(0, 0, 0, 1.0);
-  gl.clear(gl.COLOR_BUFFER_BIT);
-
-
-  gl.drawElements(gl.TRIANGLES, mesh.indexBuffer.numItems, gl.UNSIGNED_SHORT, 0);
+  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, object.mesh.indexBuffer);
+  gl.drawElements(gl.TRIANGLES, object.mesh.indexBuffer.numItems, gl.UNSIGNED_SHORT, 0);
 }
 
-
-import kyub from './objects/cube.obj?raw';
-// useLibrary(kyub);
-
-useLibrary(gourd);
+import { ObjectContainer } from './ObjectContainer';
 
 const requestAnimationFrame =
   window.requestAnimationFrame
@@ -190,19 +98,18 @@ const cancelAnimationFrame =
   window.cancelAnimationFrame
 
 let animation: number;
-let model: string = gourd;
+let model: ObjectContainer = new ObjectContainer(gl,gourd);
+
+let ObjectList: ObjectContainer[] = [];
+ObjectList.push(new ObjectContainer(gl,gourd));
+ObjectList.push(new ObjectContainer(gl,kyub));
+
 // Catch user inputs
 let direction = 0;
 const handleUserKeyPress = (event: KeyboardEvent) => {
   const { key } = event;
   console.log(key);
   switch (key) {
-    case "1":
-      model = gourd;
-      break;
-    case "2":
-      model = kyub;
-      break;
     case "ArrowUp":
       // mat4.translate(modelMatrix, modelMatrix, [0, 0.2, 0]);
       direction = 0;
@@ -225,28 +132,38 @@ const handleUserKeyPress = (event: KeyboardEvent) => {
       requestAnimate();
   }
 
-  useLibrary(model);
-
+  useObjectContainer(model);
 
 }
 
 function requestAnimate() {
-  let rotatevalue = (Math.PI / 64);
-  switch (direction) {
-    case 0:
-      mat4.rotateX(modelMatrix, modelMatrix, rotatevalue);
-      break;
-    case 1:
-      mat4.rotateY(modelMatrix, modelMatrix, rotatevalue);
-      break;
-    case 2:
-      mat4.rotateZ(modelMatrix, modelMatrix, rotatevalue);
-      break;
+  
 
-    default:
-      break;
+  // render objects
+  gl.clearColor(0, 0, 0, 1.0);
+  gl.clear(gl.COLOR_BUFFER_BIT);
+  for (let index = 0; index < ObjectList.length; index++) {
+    let rotatevalue = (Math.PI / 64) + index * 100;
+    const element = ObjectList[index];
+    switch (direction) {
+      case 0:
+        element.rotateX(rotatevalue);
+        break;
+      case 1:
+        element.rotateY(rotatevalue);
+        break;
+      case 2:
+        element.rotateZ(rotatevalue);
+        break;
+  
+      default:
+        break;
+    }
+    useObjectContainer(element);
+    
   }
-  useLibrary(model);
+
+  // recursive call
   animation = requestAnimationFrame(requestAnimate);
 }
 
