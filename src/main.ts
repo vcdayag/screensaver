@@ -69,18 +69,22 @@ let PROJECTION_ARRAY: vec2by3 = CONST_PROJECTION_ARRAY;
 let projectionMatrix = mat4.create();
 let viewMatrix = mat4.create();
 let modelMatrix = mat4.create();
+mat4.ortho(projectionMatrix, ...PROJECTION_ARRAY);
+mat4.lookAt(viewMatrix, new Float32Array(VIEWS.slice(0, 3)), new Float32Array(VIEWS.slice(3, 6)), new Float32Array(VIEWS.slice(6, 9)));
+gl.uniformMatrix4fv(uViewMatrixPointer, false, new Float32Array(viewMatrix));
+gl.uniformMatrix4fv(uProjectionMatrixPointer, false, new Float32Array(projectionMatrix));
 
-function useObjectContainer(object: ObjectContainer) {
+function renderObject(object: ObjectContainer) {
   // compile the shaders and create a shader program
-  projectionMatrix = mat4.create();
-  mat4.ortho(projectionMatrix, ...PROJECTION_ARRAY);
+  // projectionMatrix = mat4.create();
+  // mat4.ortho(projectionMatrix, ...PROJECTION_ARRAY);
 
-  viewMatrix = mat4.create();
-  mat4.lookAt(viewMatrix, new Float32Array(VIEWS.slice(0, 3)), new Float32Array(VIEWS.slice(3, 6)), new Float32Array(VIEWS.slice(6, 9)));
+  // viewMatrix = mat4.create();
+  // mat4.lookAt(viewMatrix, new Float32Array(VIEWS.slice(0, 3)), new Float32Array(VIEWS.slice(3, 6)), new Float32Array(VIEWS.slice(6, 9)));
 
   gl.uniformMatrix4fv(uModelMatrixPointer, false, new Float32Array(object.modelMatrix));
-  gl.uniformMatrix4fv(uViewMatrixPointer, false, new Float32Array(viewMatrix));
-  gl.uniformMatrix4fv(uProjectionMatrixPointer, false, new Float32Array(projectionMatrix));
+  // gl.uniformMatrix4fv(uViewMatrixPointer, false, new Float32Array(viewMatrix));
+  // gl.uniformMatrix4fv(uProjectionMatrixPointer, false, new Float32Array(projectionMatrix));
 
   // now to render the mesh
   gl.bindBuffer(gl.ARRAY_BUFFER, object.mesh.vertexBuffer);
@@ -98,11 +102,11 @@ const cancelAnimationFrame =
   window.cancelAnimationFrame
 
 let animation: number;
-let model: ObjectContainer = new ObjectContainer(gl,gourd);
+let model: ObjectContainer = new ObjectContainer(gl, gourd);
 
 let ObjectList: ObjectContainer[] = [];
-ObjectList.push(new ObjectContainer(gl,gourd));
-ObjectList.push(new ObjectContainer(gl,kyub));
+ObjectList.push(new ObjectContainer(gl, gourd));
+ObjectList.push(new ObjectContainer(gl, kyub));
 
 // Catch user inputs
 let direction = 0;
@@ -132,16 +136,17 @@ const handleUserKeyPress = (event: KeyboardEvent) => {
       requestAnimate();
   }
 
-  useObjectContainer(model);
+  renderObject(model);
 
 }
 
 function requestAnimate() {
-  
 
-  // render objects
+  //clear screen
   gl.clearColor(0, 0, 0, 1.0);
   gl.clear(gl.COLOR_BUFFER_BIT);
+
+  // render objects
   for (let index = 0; index < ObjectList.length; index++) {
     let rotatevalue = (Math.PI / 64) + index * 100;
     const element = ObjectList[index];
@@ -155,12 +160,12 @@ function requestAnimate() {
       case 2:
         element.rotateZ(rotatevalue);
         break;
-  
+
       default:
         break;
     }
-    useObjectContainer(element);
-    
+    renderObject(element);
+
   }
 
   // recursive call
