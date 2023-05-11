@@ -7,6 +7,7 @@ import { vec2by3, vec3by3 } from './types';
 // objects
 import gourd from './objects/gourd.obj?raw';
 import kyub from './objects/cube.obj?raw';
+import donut from './objects/donut.obj?raw';
 
 function createShader(gl: WebGLRenderingContext, type: number, sourceCode: string): WebGLShader {
   // Compiles either a shader of type gl.VERTEX_SHADER or gl.FRAGMENT_SHADER
@@ -79,13 +80,15 @@ function renderObject(object: ObjectContainer) {
 }
 
 function renderAll(objarray: ObjectContainer[]) {
+  // TODO translate back to top for optimization
+
   //clear screen
   gl.clearColor(0, 0, 0, 1.0);
   gl.clear(gl.COLOR_BUFFER_BIT);
 
   // render objects
   for (let index = 0; index < objarray.length; index++) {
-    let rotatevalue = (Math.PI / 64) + index * 100;
+    let rotatevalue = (Math.PI / 64) + index * 0.1;
     const element = objarray[index];
     switch (direction) {
       case 0:
@@ -118,7 +121,12 @@ let animation: number;
 let model: ObjectContainer = new ObjectContainer(gl, gourd);
 
 let ObjectList: ObjectContainer[] = [];
+
+ObjectList.push(new ObjectContainer(gl, donut));
+ObjectList.push(new ObjectContainer(gl, donut));
+ObjectList.push(new ObjectContainer(gl, kyub));
 ObjectList.push(new ObjectContainer(gl, gourd));
+ObjectList.push(new ObjectContainer(gl, donut));
 ObjectList.push(new ObjectContainer(gl, kyub));
 
 // Catch user inputs
@@ -148,6 +156,8 @@ const handleUserKeyPress = (event: KeyboardEvent) => {
   renderObject(model);
 
 }
+
+renderAll(ObjectList);
 
 function requestAnimate() {
   renderAll(ObjectList);
