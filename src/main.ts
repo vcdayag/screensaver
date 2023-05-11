@@ -77,8 +77,8 @@ function createShader(gl: WebGLRenderingContext, type: number, sourceCode: strin
 }
 
 let canvas = document.querySelector<HTMLCanvasElement>('#screensaver')!;
-canvas.height = 720;
-canvas.width = 720;
+canvas.height = window.screen.height;
+canvas.width = window.screen.width;
 
 const gl = canvas.getContext('webgl2')!;
 let program = gl.createProgram()!;
@@ -208,6 +208,9 @@ const handleUserKeyPress = (event: KeyboardEvent) => {
     case "2":
       model = kyub;
       break;
+      case "3":
+        model = icecream;
+        break;
     case "ArrowUp":
       // mat4.translate(modelMatrix, modelMatrix, [0, 0.2, 0]);
       direction = 0;
