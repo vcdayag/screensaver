@@ -99,9 +99,8 @@ function renderAll(objarray: ObjectContainer[]) {
       default:
         break;
     }
-
+    element.fall();
     renderObject(element);
-
   }
 }
 
@@ -129,8 +128,8 @@ let ObjectList: ObjectContainer[] = [];
 // ObjectList.push(new ObjectContainer(gl, bdaycake));
 // ObjectList.push(new ObjectContainer(gl, kyub));
 // ObjectList.push(new ObjectContainer(gl, gourd));
-ObjectList.push(new ObjectContainer(gl, pizza, [2,2,2]));
-// ObjectList.push(new ObjectContainer(gl, strawberry));
+// ObjectList.push(new ObjectContainer(gl, pizza, [2,2,2]));
+ObjectList.push(new ObjectContainer(gl, strawberry));
 
 // Catch user inputs
 let direction = 0;
