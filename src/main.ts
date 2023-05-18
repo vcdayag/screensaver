@@ -104,33 +104,21 @@ function renderAll(objarray: ObjectContainer[]) {
   }
 }
 
-import { ObjectContainer } from './ObjectContainer';
+let animation: number;
 
 const requestAnimationFrame =
   window.requestAnimationFrame
 const cancelAnimationFrame =
   window.cancelAnimationFrame
 
-// objects
-import gourd from './objects/gourd.obj?raw';
-import kyub from './objects/cube.obj?raw';
-import donut from './objects/donut.obj?raw';
-import bdaycake from './objects/bday_cake.obj?raw';
-import pizza from './objects/pizza.obj?raw';
-import strawberry from './objects/strawberry.obj?raw';
-
-let animation: number;
-let model: ObjectContainer = new ObjectContainer(gl, gourd);
-
+import { ObjectContainer } from './ObjectContainer';
+import { RawObjects } from "./objectFiles";
 let ObjectList: ObjectContainer[] = [];
-
-// ObjectList.push(new ObjectContainer(gl, donut));
-// ObjectList.push(new ObjectContainer(gl, bdaycake));
-// ObjectList.push(new ObjectContainer(gl, kyub));
-// ObjectList.push(new ObjectContainer(gl, gourd));
-// ObjectList.push(new ObjectContainer(gl, pizza, [2,2,2]));
-ObjectList.push(new ObjectContainer(gl, strawberry));
-
+for (let index = 0; index < 3; index++) {
+  RawObjects.forEach(object => {
+    ObjectList.push(new ObjectContainer(gl,object));
+  });
+}
 // Catch user inputs
 let direction = 0;
 const handleUserKeyPress = (event: KeyboardEvent) => {
@@ -154,9 +142,6 @@ const handleUserKeyPress = (event: KeyboardEvent) => {
     case " ":
       requestAnimate();
   }
-
-  renderObject(model);
-
 }
 
 renderAll(ObjectList);
