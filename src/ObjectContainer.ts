@@ -10,12 +10,15 @@ export class ObjectContainer {
     mesh: MeshWithBuffers;
     modelMatrix: mat4;
 
-    constructor(gl: WebGLRenderingContext, objectString: string) {
-      this.gl = gl;
-      this.mesh = OBJ.initMeshBuffers(gl, new OBJ.Mesh(objectString));
-      this.modelMatrix = mat4.create();
-      mat4.translate(this.modelMatrix, this.modelMatrix, [getRandom(5), getRandom(5), getRandom(5)]);
-    }
+    constructor(gl: WebGLRenderingContext, objectString: string, initialScale?: [number,number,number] ) {
+        this.gl = gl;
+        this.mesh = OBJ.initMeshBuffers(gl, new OBJ.Mesh(objectString));
+        this.modelMatrix = mat4.create();
+        mat4.translate(this.modelMatrix, this.modelMatrix, [getRandom(5), getRandom(5), getRandom(5)]);
+        if(initialScale){
+          mat4.scale(this.modelMatrix,this.modelMatrix,initialScale);
+        }
+      }
 
     rotateX(rotateValue: number){
         mat4.rotateX(this.modelMatrix,this.modelMatrix,rotateValue);

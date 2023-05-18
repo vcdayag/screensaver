@@ -4,11 +4,6 @@ import fragmentShaderSourceCode from './shaders/fragment.glsl?raw';
 import { mat4 } from 'gl-matrix';
 import { vec2by3, vec3by3 } from './types';
 
-// objects
-import gourd from './objects/gourd.obj?raw';
-import kyub from './objects/cube.obj?raw';
-import donut from './objects/donut.obj?raw';
-
 function createShader(gl: WebGLRenderingContext, type: number, sourceCode: string): WebGLShader {
   // Compiles either a shader of type gl.VERTEX_SHADER or gl.FRAGMENT_SHADER
   var shader = gl.createShader(type)!;
@@ -117,17 +112,25 @@ const requestAnimationFrame =
 const cancelAnimationFrame =
   window.cancelAnimationFrame
 
+// objects
+import gourd from './objects/gourd.obj?raw';
+import kyub from './objects/cube.obj?raw';
+import donut from './objects/donut.obj?raw';
+import bdaycake from './objects/bday_cake.obj?raw';
+import pizza from './objects/pizza.obj?raw';
+import strawberry from './objects/strawberry.obj?raw';
+
 let animation: number;
 let model: ObjectContainer = new ObjectContainer(gl, gourd);
 
 let ObjectList: ObjectContainer[] = [];
 
-ObjectList.push(new ObjectContainer(gl, donut));
-ObjectList.push(new ObjectContainer(gl, donut));
-ObjectList.push(new ObjectContainer(gl, kyub));
-ObjectList.push(new ObjectContainer(gl, gourd));
-ObjectList.push(new ObjectContainer(gl, donut));
-ObjectList.push(new ObjectContainer(gl, kyub));
+// ObjectList.push(new ObjectContainer(gl, donut));
+// ObjectList.push(new ObjectContainer(gl, bdaycake));
+// ObjectList.push(new ObjectContainer(gl, kyub));
+// ObjectList.push(new ObjectContainer(gl, gourd));
+ObjectList.push(new ObjectContainer(gl, pizza, [2,2,2]));
+// ObjectList.push(new ObjectContainer(gl, strawberry));
 
 // Catch user inputs
 let direction = 0;
