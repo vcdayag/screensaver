@@ -5,12 +5,19 @@ function getRandom(value: number) {
   return (Math.random() < 0.5 ? -1 : 1) * Math.random() * value;
 }
 
+function getRandomNegative(value: number) {
+  return -1 * Math.random() * value;
+}
+
 export class ObjectContainer {
   gl: WebGLRenderingContext;
   mesh: MeshWithBuffers;
   modelMatrix: mat4;
   quaternion: quat;
   position: vec3;
+
+  rotateValue: number;
+  fallingValue: number;
 
   constructor(
     gl: WebGLRenderingContext,
@@ -19,33 +26,45 @@ export class ObjectContainer {
   ) {
     this.gl = gl;
     this.mesh = OBJ.initMeshBuffers(gl, new OBJ.Mesh(objectString));
+    
     this.modelMatrix = mat4.create();
     this.position = [getRandom(5), getRandom(5), getRandom(5)];
     this.quaternion = quat.create();
+    this.rotateValue = getRandom(1/16);
+    this.fallingValue = getRandomNegative(0.2);
+
     if (initialScale) {
       mat4.scale(this.modelMatrix, this.modelMatrix, initialScale);
     }
   }
 
+  objectReset(){
+    this.quaternion = quat.create();
+    this.rotateValue = getRandom(1/16);
+    this.fallingValue = getRandomNegative(0.2);
+    this.position[0] = getRandom(10);
+      this.position[1] = -this.position[1];
+      this.position[2] = getRandom(10);
+  }
+
   rotateX(rotateValue: number) {
-    quat.rotateX(this.quaternion, this.quaternion, rotateValue);
+    quat.rotateX(this.quaternion, this.quaternion, this.rotateValue);
   }
 
   rotateY(rotateValue: number) {
-    quat.rotateY(this.quaternion, this.quaternion, rotateValue);
+    quat.rotateY(this.quaternion, this.quaternion, this.rotateValue);
   }
 
   rotateZ(rotateValue: number) {
-    quat.rotateZ(this.quaternion, this.quaternion, rotateValue);
+    quat.rotateZ(this.quaternion, this.quaternion, this.rotateValue);
   }
 
   fall() {
     if (this.modelMatrix[13] < -15) {
-      this.position[0] = getRandom(10);
-      this.position[1] = -this.position[1];
-      this.position[2] = getRandom(10);
+      this.objectReset();
     }
-    this.position[1] -= 0.1;
+
+    this.position[1] += this.fallingValue;
     mat4.fromRotationTranslation(
       this.modelMatrix,
       this.quaternion,
