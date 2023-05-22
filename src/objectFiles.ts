@@ -7,9 +7,12 @@ import donut from './objects/donut.obj?raw';
 import bdaycake from './objects/bday_cake.obj?raw';
 import pizza from './objects/pizza.obj?raw';
 import strawberry from './objects/strawberry.obj?raw';
+import banana from './objects/banana.obj?raw';
+import icecream from './objects/icecream.obj?raw';
 
 export const RawObjects = [
     strawberry,
     gourd,
-    kyub
+    banana,
+    icecream
 ];

@@ -118,7 +118,7 @@ let ObjectList: ObjectContainer[] = [];
 
 for (let index = 0; index < 3; index++) {
   RawObjects.forEach(object => {
-    ObjectList.push(new ObjectContainer(gl,object));
+    ObjectList.push(new ObjectContainer(gl, object));
   });
 }
 
