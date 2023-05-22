@@ -4,6 +4,7 @@ import fragmentShaderSourceCode from './shaders/fragment.glsl?raw';
 import { mat4 } from 'gl-matrix';
 import { vec2by3, vec3by3 } from './types';
 
+
 function createShader(gl: WebGLRenderingContext, type: number, sourceCode: string): WebGLShader {
   // Compiles either a shader of type gl.VERTEX_SHADER or gl.FRAGMENT_SHADER
   var shader = gl.createShader(type)!;
@@ -114,11 +115,13 @@ const cancelAnimationFrame =
 import { ObjectContainer } from './ObjectContainer';
 import { RawObjects } from "./objectFiles";
 let ObjectList: ObjectContainer[] = [];
+
 for (let index = 0; index < 3; index++) {
   RawObjects.forEach(object => {
     ObjectList.push(new ObjectContainer(gl,object));
   });
 }
+
 // Catch user inputs
 let direction = 0;
 const handleUserKeyPress = (event: KeyboardEvent) => {
