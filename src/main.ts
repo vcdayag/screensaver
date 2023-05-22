@@ -4,11 +4,6 @@ import fragmentShaderSourceCode from './shaders/fragment.glsl?raw';
 import { mat4 } from 'gl-matrix';
 import { vec2by3, vec3by3 } from './types';
 
-// objects
-import gourd from './objects/gourd.obj?raw';
-import kyub from './objects/cube.obj?raw';
-import donut from './objects/donut.obj?raw';
-import banana from './objects/banana.obj?raw';
 
 function createShader(gl: WebGLRenderingContext, type: number, sourceCode: string): WebGLShader {
   // Compiles either a shader of type gl.VERTEX_SHADER or gl.FRAGMENT_SHADER
@@ -105,32 +100,27 @@ function renderAll(objarray: ObjectContainer[]) {
       default:
         break;
     }
-
+    element.fall();
     renderObject(element);
-
   }
 }
 
-import { ObjectContainer } from './ObjectContainer';
+let animation: number;
 
 const requestAnimationFrame =
   window.requestAnimationFrame
 const cancelAnimationFrame =
   window.cancelAnimationFrame
 
-let animation: number;
-let model: ObjectContainer = new ObjectContainer(gl, gourd);
-
+import { ObjectContainer } from './ObjectContainer';
+import { RawObjects } from "./objectFiles";
 let ObjectList: ObjectContainer[] = [];
 
-ObjectList.push(new ObjectContainer(gl, donut));
-ObjectList.push(new ObjectContainer(gl, donut));
-ObjectList.push(new ObjectContainer(gl, kyub));
-ObjectList.push(new ObjectContainer(gl, gourd));
-ObjectList.push(new ObjectContainer(gl, donut));
-ObjectList.push(new ObjectContainer(gl, kyub));
-ObjectList.push(new ObjectContainer(gl, banana));
-ObjectList.push(new ObjectContainer(gl, banana));
+for (let index = 0; index < 3; index++) {
+  RawObjects.forEach(object => {
+    ObjectList.push(new ObjectContainer(gl,object));
+  });
+}
 
 // Catch user inputs
 let direction = 0;
@@ -155,9 +145,6 @@ const handleUserKeyPress = (event: KeyboardEvent) => {
     case " ":
       requestAnimate();
   }
-
-  renderObject(model);
-
 }
 
 renderAll(ObjectList);
