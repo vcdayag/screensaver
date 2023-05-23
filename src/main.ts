@@ -4,6 +4,54 @@ import fragmentShaderSourceCode from './shaders/fragment.glsl?raw';
 import { mat4 } from 'gl-matrix';
 import { vec2by3, vec3by3 } from './types';
 
+//obj materials
+var ns: number, ni: number, d: number, illum: number;
+var ka: number[] = [];
+var kd: number[] = [];
+var ks: number[] = [];
+var ke: number[] = [];
+
+
+//function to extract materials & texture from mtl file
+function parseMTLFile(matFile: String) {
+  var matFileSplit = matFile.split('\n');
+
+  //file read per line
+  for (var line = 0; line < matFileSplit.length; line++) {
+    let lineSplit = matFileSplit[line].split(' ');
+
+    if (lineSplit[0] == 'Ns') {
+      ns = Number(lineSplit[1]);
+    } else if (lineSplit[0] == 'Ka' || lineSplit[0] == 'Kd' || lineSplit[0] == 'Ks' || lineSplit[0] == 'Ke') {
+      for (var word = 1; word < lineSplit.length; word++) {
+        if (lineSplit[0] == 'Ka') {
+          ka.push(Number(lineSplit[word]));
+        } else if (lineSplit[0] == 'Kd') {
+          kd.push(Number(lineSplit[word]));
+        } else if (lineSplit[0] == 'Ks') {
+          ks.push(Number(lineSplit[word]));
+        } else if (lineSplit[0] == 'Ke') {
+          ke.push(Number(lineSplit[word]));
+        }
+      }
+    } else if (lineSplit[0] == 'Ni') {
+      ni = Number(lineSplit[1]);
+    } else if (lineSplit[0] == 'd') {
+      d = Number(lineSplit[1]);
+    } else if (lineSplit[0] == 'illum') {
+      illum = Number(lineSplit[1]);
+    }
+  }
+  console.log('Ns: ' + String(ns) + '\n'
+    + 'Ka: ' + String(ka) + '\n' +
+    'Kd: ' + String(kd) + '\n' +
+    'Ks: ' + String(ks) + '\n' +
+    'Ke: ' + String(ke) + '\n' +
+    'Ni: ' + String(ni) + '\n' +
+    'd: ' + String(d) + '\n' +
+    'illum: ' + String(illum))
+}
+
 function createShader(gl: WebGLRenderingContext, type: number, sourceCode: string): WebGLShader {
   // Compiles either a shader of type gl.VERTEX_SHADER or gl.FRAGMENT_SHADER
   var shader = gl.createShader(type)!;
@@ -18,8 +66,8 @@ function createShader(gl: WebGLRenderingContext, type: number, sourceCode: strin
 }
 
 let canvas = document.querySelector<HTMLCanvasElement>('#screensaver')!;
-canvas.height = 360;
-canvas.width = 360;
+canvas.height = window.screen.height;
+canvas.width = window.screen.width;
 
 const gl = canvas.getContext('webgl2')!;
 let program = gl.createProgram()!;
@@ -45,6 +93,8 @@ const uViewMatrixPointer = gl.getUniformLocation(program, "u_view_matrix");
 const uProjectionMatrixPointer = gl.getUniformLocation(program, "u_projection_matrix");
 
 const vertexPositionAttribute = gl.getAttribLocation(program, "a_position");
+const textureCoordAttribute = gl.getAttribLocation(program, "a_color");
+
 gl.enableVertexAttribArray(vertexPositionAttribute);
 
 gl.enable(gl.DEPTH_TEST);
@@ -69,6 +119,9 @@ function renderObject(object: ObjectContainer) {
   // now to render the mesh
   gl.bindBuffer(gl.ARRAY_BUFFER, object.mesh.vertexBuffer);
   gl.vertexAttribPointer(vertexPositionAttribute, object.mesh.vertexBuffer.itemSize, gl.FLOAT, false, 0, 0);
+
+  gl.vertexAttrib4f(textureCoordAttribute, 0.4, 0.2, 0, 1);
+
 
   gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, object.mesh.indexBuffer);
   gl.drawElements(gl.TRIANGLES, object.mesh.indexBuffer.numItems, gl.UNSIGNED_SHORT, 0);
@@ -119,17 +172,18 @@ import donut from './objects/donut.obj?raw';
 import bdaycake from './objects/bday_cake.obj?raw';
 import pizza from './objects/pizza.obj?raw';
 import strawberry from './objects/strawberry.obj?raw';
+import emtee from './objects/icecream.mtl?raw';
 
 let animation: number;
 let model: ObjectContainer = new ObjectContainer(gl, gourd);
 
 let ObjectList: ObjectContainer[] = [];
 
-// ObjectList.push(new ObjectContainer(gl, donut));
-// ObjectList.push(new ObjectContainer(gl, bdaycake));
-// ObjectList.push(new ObjectContainer(gl, kyub));
-// ObjectList.push(new ObjectContainer(gl, gourd));
-ObjectList.push(new ObjectContainer(gl, pizza, [2,2,2]));
+ObjectList.push(new ObjectContainer(gl, donut));
+ObjectList.push(new ObjectContainer(gl, bdaycake));
+ObjectList.push(new ObjectContainer(gl, kyub));
+ObjectList.push(new ObjectContainer(gl, gourd));
+ObjectList.push(new ObjectContainer(gl, pizza, [2, 2, 2]));
 // ObjectList.push(new ObjectContainer(gl, strawberry));
 
 // Catch user inputs
@@ -167,5 +221,7 @@ function requestAnimate() {
   // recursive call
   animation = requestAnimationFrame(requestAnimate);
 }
+
+parseMTLFile(emtee);
 
 window.addEventListener('keydown', handleUserKeyPress);
