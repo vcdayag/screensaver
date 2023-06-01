@@ -12,7 +12,14 @@ import icecream from './objects/icecream.obj?raw';
 
 export const RawObjects = [
     strawberry,
-    gourd,
     banana,
-    icecream
+    icecream,
+    donut
+];
+
+export const objectColors = [
+    [1,0,1,1],
+    [1,1,0,1],
+    [1,1,1,1],
+    [0,0,1,1]
 ];

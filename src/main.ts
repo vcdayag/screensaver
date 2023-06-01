@@ -3,6 +3,10 @@ import vertexShaderSourceCode from './shaders/vertex.glsl?raw';
 import fragmentShaderSourceCode from './shaders/fragment.glsl?raw';
 import { mat4 } from 'gl-matrix';
 import { vec2by3, vec3by3 } from './types';
+import { ObjectContainer } from './ObjectContainer';
+import { RawObjects, objectColors } from "./objectFiles";
+
+console.log(typeof objectColors[0]);
 
 
 function createShader(gl: WebGLRenderingContext, type: number, sourceCode: string): WebGLShader {
@@ -19,8 +23,8 @@ function createShader(gl: WebGLRenderingContext, type: number, sourceCode: strin
 }
 
 let canvas = document.querySelector<HTMLCanvasElement>('#screensaver')!;
-canvas.height = 360;
-canvas.width = 360;
+canvas.height = 800;
+canvas.width = 800;
 
 const gl = canvas.getContext('webgl2')!;
 let program = gl.createProgram()!;
@@ -64,24 +68,25 @@ mat4.lookAt(viewMatrix, new Float32Array(VIEWS.slice(0, 3)), new Float32Array(VI
 gl.uniformMatrix4fv(uViewMatrixPointer, false, new Float32Array(viewMatrix));
 gl.uniformMatrix4fv(uProjectionMatrixPointer, false, new Float32Array(projectionMatrix));
 
-function renderObject(object: ObjectContainer) {
+function renderObject(object: ObjectContainer, objectColor: number[]) {
   gl.uniformMatrix4fv(uModelMatrixPointer, false, new Float32Array(object.modelMatrix));
 
   // now to render the mesh
   gl.bindBuffer(gl.ARRAY_BUFFER, object.mesh.vertexBuffer);
-  gl.vertexAttribPointer(vertexPositionAttribute, object.mesh.vertexBuffer.itemSize, gl.FLOAT, false, 0, 0);
-
+  const col = gl.getAttribLocation(program,"a_color");
   gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, object.mesh.indexBuffer);
+  gl.vertexAttribPointer(vertexPositionAttribute, object.mesh.vertexBuffer.itemSize, gl.FLOAT, false, 0, 0);
+  gl.vertexAttrib4f(col, objectColor[0],objectColor[1],objectColor[2],objectColor[3]); 
   gl.drawElements(gl.TRIANGLES, object.mesh.indexBuffer.numItems, gl.UNSIGNED_SHORT, 0);
 }
 
-function renderAll(objarray: ObjectContainer[]) {
+function renderAll(objarray: ObjectContainer[], colors: number[][]) {
   // TODO translate back to top for optimization
-
+  const objcol = colors.concat(colors,colors);
   //clear screen
   gl.clearColor(0, 0, 0, 1.0);
   gl.clear(gl.COLOR_BUFFER_BIT);
-
+  
   // render objects
   for (let index = 0; index < objarray.length; index++) {
     let rotatevalue = (Math.PI / 64) + index * 0.1;
@@ -101,7 +106,7 @@ function renderAll(objarray: ObjectContainer[]) {
         break;
     }
     element.fall();
-    renderObject(element);
+    renderObject(element,objcol[index]);
   }
 }
 
@@ -112,15 +117,16 @@ const requestAnimationFrame =
 const cancelAnimationFrame =
   window.cancelAnimationFrame
 
-import { ObjectContainer } from './ObjectContainer';
-import { RawObjects } from "./objectFiles";
+
 let ObjectList: ObjectContainer[] = [];
 
 for (let index = 0; index < 3; index++) {
   RawObjects.forEach(object => {
-    ObjectList.push(new ObjectContainer(gl, object));
+    ObjectList.push(new ObjectContainer(gl,object));
   });
 }
+
+console.log("Length is ",ObjectList.length);
 
 // Catch user inputs
 let direction = 0;
@@ -147,10 +153,10 @@ const handleUserKeyPress = (event: KeyboardEvent) => {
   }
 }
 
-renderAll(ObjectList);
+renderAll(ObjectList,objectColors);
 
 function requestAnimate() {
-  renderAll(ObjectList);
+  renderAll(ObjectList,objectColors);
   // recursive call
   animation = requestAnimationFrame(requestAnimate);
 }
