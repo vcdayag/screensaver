@@ -6,10 +6,10 @@ import { vec2by3, vec3by3 } from './types';
 
 //obj materials
 var ns: number, ni: number, d: number, illum: number;
-var ka: number[] = [];
-var kd: number[] = [];
-var ks: number[] = [];
-var ke: number[] = [];
+var ka = [0, 0, 0]; //ambient color
+var kd = [0 ,0, 0]; //diffuse color
+var ks = [0, 0, 0]; //specular color
+var ke = [0, 0, 0];
 
 
 //function to extract materials & texture from mtl file
@@ -25,13 +25,13 @@ function parseMTLFile(matFile: String) {
     } else if (lineSplit[0] == 'Ka' || lineSplit[0] == 'Kd' || lineSplit[0] == 'Ks' || lineSplit[0] == 'Ke') {
       for (var word = 1; word < lineSplit.length; word++) {
         if (lineSplit[0] == 'Ka') {
-          ka.push(Number(lineSplit[word]));
+          ka[word-1] = (Number(lineSplit[word]));
         } else if (lineSplit[0] == 'Kd') {
-          kd.push(Number(lineSplit[word]));
+          kd[word-1]=(Number(lineSplit[word]));
         } else if (lineSplit[0] == 'Ks') {
-          ks.push(Number(lineSplit[word]));
+          ks[word-1]=(Number(lineSplit[word]));
         } else if (lineSplit[0] == 'Ke') {
-          ke.push(Number(lineSplit[word]));
+          ke[word-1]=(Number(lineSplit[word]));
         }
       }
     } else if (lineSplit[0] == 'Ni') {
@@ -42,14 +42,6 @@ function parseMTLFile(matFile: String) {
       illum = Number(lineSplit[1]);
     }
   }
-  console.log('Ns: ' + String(ns) + '\n'
-    + 'Ka: ' + String(ka) + '\n' +
-    'Kd: ' + String(kd) + '\n' +
-    'Ks: ' + String(ks) + '\n' +
-    'Ke: ' + String(ke) + '\n' +
-    'Ni: ' + String(ni) + '\n' +
-    'd: ' + String(d) + '\n' +
-    'illum: ' + String(illum))
 }
 
 function createShader(gl: WebGLRenderingContext, type: number, sourceCode: string): WebGLShader {
@@ -91,13 +83,19 @@ gl.useProgram(program);
 const uModelMatrixPointer = gl.getUniformLocation(program, "u_model_matrix");
 const uViewMatrixPointer = gl.getUniformLocation(program, "u_view_matrix");
 const uProjectionMatrixPointer = gl.getUniformLocation(program, "u_projection_matrix");
+const uLightDirectPointer = gl.getUniformLocation(program, 'u_light_direction');
+const uLightDiffuse = gl.getUniformLocation(program, 'u_light_diffuse');
 
+const vertexNormalAttribute = gl.getAttribLocation(program, 'a_normal');
 const vertexPositionAttribute = gl.getAttribLocation(program, "a_position");
-const textureCoordAttribute = gl.getAttribLocation(program, "a_color");
+const colorAttrib = gl.getAttribLocation(program, "a_color");
+
 
 gl.enableVertexAttribArray(vertexPositionAttribute);
 
-gl.enable(gl.DEPTH_TEST);
+// gl.enable(gl.DEPTH_TEST);
+gl.enable(gl.BLEND);
+
 
 
 const CONST_VIEWS: vec3by3 = [0, 0, 0, 0, 0, -1, 0, 1, 0];
@@ -113,31 +111,44 @@ mat4.lookAt(viewMatrix, new Float32Array(VIEWS.slice(0, 3)), new Float32Array(VI
 gl.uniformMatrix4fv(uViewMatrixPointer, false, new Float32Array(viewMatrix));
 gl.uniformMatrix4fv(uProjectionMatrixPointer, false, new Float32Array(projectionMatrix));
 
-function renderObject(object: ObjectContainer) {
+function renderObject(object: ObjectContainer, mtlFile: String) {
+  parseMTLFile(mtlFile);
+
   gl.uniformMatrix4fv(uModelMatrixPointer, false, new Float32Array(object.modelMatrix));
+
+  gl.uniform3f(uLightDirectPointer, 1.0, 1.0, 1.0);
+  gl.uniform3f(uLightDiffuse, ka[0], ka[1], ka[2]);
 
   // now to render the mesh
   gl.bindBuffer(gl.ARRAY_BUFFER, object.mesh.vertexBuffer);
   gl.vertexAttribPointer(vertexPositionAttribute, object.mesh.vertexBuffer.itemSize, gl.FLOAT, false, 0, 0);
 
-  gl.vertexAttrib4f(textureCoordAttribute, 0.4, 0.2, 0, 1);
+  gl.vertexAttrib4f(colorAttrib, kd[0], kd[1], kd[2], 1);
 
+  gl.bindBuffer(gl.ARRAY_BUFFER, object.mesh.normalBuffer);
+  gl.vertexAttribPointer(vertexNormalAttribute, object.mesh.normalBuffer.itemSize, gl.FLOAT, false, 0, 0);
 
   gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, object.mesh.indexBuffer);
   gl.drawElements(gl.TRIANGLES, object.mesh.indexBuffer.numItems, gl.UNSIGNED_SHORT, 0);
+
+  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
+  gl.bindBuffer(gl.ARRAY_BUFFER, null);
+
 }
 
-function renderAll(objarray: ObjectContainer[]) {
+function renderAll(objarray: ObjectContainer[], mtlArray: String[]) {
   // TODO translate back to top for optimization
 
   //clear screen
-  gl.clearColor(0, 0, 0, 1.0);
+  gl.clearColor(0.8, 0.8, 0.8, 1.0);
   gl.clear(gl.COLOR_BUFFER_BIT);
 
   // render objects
   for (let index = 0; index < objarray.length; index++) {
     let rotatevalue = (Math.PI / 64) + index * 0.1;
     const element = objarray[index];
+    const materials = mtlArray[index];
+
     switch (direction) {
       case 0:
         element.rotateX(rotatevalue);
@@ -153,7 +164,7 @@ function renderAll(objarray: ObjectContainer[]) {
         break;
     }
 
-    renderObject(element);
+    renderObject(element, materials);
 
   }
 }
@@ -172,19 +183,29 @@ import donut from './objects/donut.obj?raw';
 import bdaycake from './objects/bday_cake.obj?raw';
 import pizza from './objects/pizza.obj?raw';
 import strawberry from './objects/strawberry.obj?raw';
-import emtee from './objects/icecream.mtl?raw';
+import strawberryMtl from './objects/strawberry.mtl?raw';
+import icecream from './objects/icecream.obj?raw';
+import icecreamMtl from './objects/icecream.mtl?raw';
 
 let animation: number;
 let model: ObjectContainer = new ObjectContainer(gl, gourd);
 
 let ObjectList: ObjectContainer[] = [];
+let mtlList: String[] = [];
+let typeList: String[] = ['color', 'texture'];
 
-ObjectList.push(new ObjectContainer(gl, donut));
-ObjectList.push(new ObjectContainer(gl, bdaycake));
-ObjectList.push(new ObjectContainer(gl, kyub));
-ObjectList.push(new ObjectContainer(gl, gourd));
-ObjectList.push(new ObjectContainer(gl, pizza, [2, 2, 2]));
+// ObjectList.push(new ObjectContainer(gl, donut));
+// ObjectList.push(new ObjectContainer(gl, bdaycake));
+// ObjectList.push(new ObjectContainer(gl, kyub));
+// ObjectList.push(new ObjectContainer(gl, gourd));
+// ObjectList.push(new ObjectContainer(gl, pizza, [2, 2, 2]));
 // ObjectList.push(new ObjectContainer(gl, strawberry));
+ObjectList.push(new ObjectContainer(gl, icecream));
+ObjectList.push(new ObjectContainer(gl, strawberry));
+
+mtlList.push(icecreamMtl);
+mtlList.push(strawberryMtl);
+
 
 // Catch user inputs
 let direction = 0;
@@ -210,18 +231,16 @@ const handleUserKeyPress = (event: KeyboardEvent) => {
       requestAnimate();
   }
 
-  renderObject(model);
+  renderAll(ObjectList, mtlList);
 
 }
 
-renderAll(ObjectList);
+renderAll(ObjectList, mtlList);
 
 function requestAnimate() {
-  renderAll(ObjectList);
+  renderAll(ObjectList, mtlList);
   // recursive call
   animation = requestAnimationFrame(requestAnimate);
 }
-
-parseMTLFile(emtee);
 
 window.addEventListener('keydown', handleUserKeyPress);
