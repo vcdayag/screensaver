@@ -213,7 +213,6 @@ for(var index = 0; index < 3; index ++){
 let direction = 0;
 const handleUserKeyPress = (event: KeyboardEvent) => {
   const { key } = event;
-  console.log(key);
   switch (key) {
     case "ArrowUp":
       direction = 0;
