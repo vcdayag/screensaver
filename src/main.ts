@@ -3,6 +3,7 @@ import vertexShaderSourceCode from './shaders/vertex.glsl?raw';
 import fragmentShaderSourceCode from './shaders/fragment.glsl?raw';
 import * as glMatrix from 'gl-matrix';
 import { vec2by3, vec3by3 } from './types';
+import {RawObjects, mtlFiles} from './objectFiles';
 
 //obj materials
 var ns: number, ni: number, d: number, illum: number;
@@ -167,7 +168,7 @@ function renderAll(objarray: ObjectContainer[], mtlArray: String[]) {
       default:
         break;
     }
-
+    element.fall();
     renderObject(element, materials);
 
   }
@@ -196,19 +197,16 @@ let model: ObjectContainer = new ObjectContainer(gl, gourd);
 
 let ObjectList: ObjectContainer[] = [];
 let mtlList: String[] = [];
-let typeList: String[] = ['color', 'texture'];
 
-// ObjectList.push(new ObjectContainer(gl, donut));
-// ObjectList.push(new ObjectContainer(gl, bdaycake));
-// ObjectList.push(new ObjectContainer(gl, kyub));
-// ObjectList.push(new ObjectContainer(gl, gourd));
-// ObjectList.push(new ObjectContainer(gl, pizza, [2, 2, 2]));
-// ObjectList.push(new ObjectContainer(gl, strawberry));
-ObjectList.push(new ObjectContainer(gl, icecream));
-ObjectList.push(new ObjectContainer(gl, strawberry));
+for(var index = 0; index < 3; index ++){
+  RawObjects.forEach(obj =>{
+    ObjectList.push(new ObjectContainer(gl, obj));
+  })
 
-mtlList.push(icecreamMtl);
-mtlList.push(strawberryMtl);
+  mtlFiles.forEach(file =>{
+    mtlList.push(file);
+  })
+}
 
 
 // Catch user inputs
@@ -234,9 +232,7 @@ const handleUserKeyPress = (event: KeyboardEvent) => {
     case " ":
       requestAnimate();
   }
-
   renderAll(ObjectList, mtlList);
-
 }
 
 renderAll(ObjectList, mtlList);
@@ -248,17 +244,3 @@ function requestAnimate() {
 }
 
 window.addEventListener('keydown', handleUserKeyPress);
-
-function correctNormal(outMat: glMatrix.vec3, tempMat: glMatrix.mat3, tempVec: glMatrix.vec3) {
-  var bx = tempVec[0],
-      by = tempVec[1],
-      bz = tempVec[2]
-
-  for (var i = 0; i < 3; i++) {
-      var ax = tempMat[i],
-          ay = tempMat[i + 3],
-          az = tempMat[i + 6]
-      outMat[i] = (ax * bx) + (ay * by) + (az * bz);
-  }
-  return outMat;
-}
