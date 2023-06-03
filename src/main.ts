@@ -82,17 +82,16 @@ gl.useProgram(program);
 const uModelMatrixPointer = gl.getUniformLocation(program, "u_model_matrix");
 const uViewMatrixPointer = gl.getUniformLocation(program, "u_view_matrix");
 const uProjectionMatrixPointer = gl.getUniformLocation(program, "u_projection_matrix");
-const uLightDirectPointer = gl.getUniformLocation(program, 'u_light_direction');
+const uNormalMatrixPointer = gl.getUniformLocation(program, 'u_normal_matrix');
+const uLightDirectPointer = gl.getUniformLocation(program, 'light_position');
 const uLightDiffuse = gl.getUniformLocation(program, 'u_light_diffuse');
-const aLCPointer = gl.getAttribLocation(program, "lc");
-
 
 const vertexNormalAttribute = gl.getAttribLocation(program, 'a_normal');
 const vertexPositionAttribute = gl.getAttribLocation(program, "a_position");
 const colorAttrib = gl.getAttribLocation(program, "a_color");
 
 let normalMatrix = glMatrix.mat3.create();
-let vecLightDirection = [0.0, 8.5, 0.0]
+let vecLightDirection = [2.0, 8.5, 1.0]
 
 
 gl.enableVertexAttribArray(vertexPositionAttribute);
@@ -115,36 +114,9 @@ gl.uniformMatrix4fv(uProjectionMatrixPointer, false, new Float32Array(projection
 
 function renderObject(object: ObjectContainer, mtlFile: String) {
   glMatrix.mat3.normalFromMat4(normalMatrix, object.modelMatrix);    // get normal matrix from modelmatrix
-  let LCArray = [];
+  gl.uniformMatrix4fv(uProjectionMatrixPointer, false, new Float32Array(projectionMatrix));
+  gl.uniformMatrix3fv(uNormalMatrixPointer, false, new Float32Array(normalMatrix));
 
-  let corrected_normal_vector = glMatrix.vec3.create();
-  let normalized_corrected_normal = glMatrix.vec3.create();
-  let normalized_u_light_direction = glMatrix.vec3.create();
-  let negate_u_light_direction = glMatrix.vec3.create();
-  let tempLam = 0.0;
-  for( var i = 0; i < object.mesh.vertexNormals.length; i+=3){
-    correctNormal(corrected_normal_vector, normalMatrix, [object.mesh.vertexNormals[i],object.mesh.vertexNormals[i+1],object.mesh.vertexNormals[i+2]]);
-
-    glMatrix.vec3.normalize(normalized_corrected_normal, corrected_normal_vector);
-    glMatrix.vec3.normalize(normalized_u_light_direction, [vecLightDirection[0],vecLightDirection[1],vecLightDirection[2]]);
-
-    glMatrix.vec3.negate(negate_u_light_direction, normalized_u_light_direction);
-
-    tempLam = glMatrix.vec3.dot(negate_u_light_direction, normalized_corrected_normal);
-    var lambertCoeff = Math.max(tempLam, 0.0);
-
-    LCArray.push(lambertCoeff);
-    LCArray.push(lambertCoeff);
-    LCArray.push(lambertCoeff);
-
-  }
-  let LcBuffer = gl.createBuffer();
-  gl.bindBuffer(gl.ARRAY_BUFFER, LcBuffer);
-  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(LCArray), gl.STATIC_DRAW);
-
-  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(LCArray), gl.STATIC_DRAW);
-  gl.vertexAttribPointer(aLCPointer, 1, gl.FLOAT, false, 0, 0);
-  gl.enableVertexAttribArray(aLCPointer);
   parseMTLFile(mtlFile);
 
   gl.uniformMatrix4fv(uModelMatrixPointer, false, new Float32Array(object.modelMatrix));
