@@ -6,15 +6,24 @@ import kyub from './objects/cube.obj?raw';
 import donut from './objects/donut.obj?raw';
 import bdaycake from './objects/bday_cake.obj?raw';
 import pizza from './objects/pizza.obj?raw';
-import strawberry from './objects/strawberry.obj?raw';
 import banana from './objects/banana.obj?raw';
+import strawberry from './objects/strawberry.obj?raw';
 import icecream from './objects/icecream.obj?raw';
 
+import icecreamMtl from './objects/icecream.mtl?raw';
+import strawberryMtl from './objects/strawberry.mtl?raw';
+
+
 export const RawObjects = [
-    strawberry,
-    banana,
     icecream,
-    donut
+    strawberry,
+    //banana,
+    //donut
+];
+
+export const mtlFiles = [
+    icecreamMtl,
+    strawberryMtl,
 ];
 
 export const objectColors = [
