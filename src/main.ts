@@ -1,7 +1,7 @@
 import './style.css'
 import vertexShaderSourceCode from './shaders/vertex.glsl?raw';
 import fragmentShaderSourceCode from './shaders/fragment.glsl?raw';
-import { mat4 } from 'gl-matrix';
+import * as glMatrix from 'gl-matrix';
 import { vec2by3, vec3by3 } from './types';
 
 //obj materials
@@ -10,7 +10,6 @@ var ka = [0, 0, 0]; //ambient color
 var kd = [0 ,0, 0]; //diffuse color
 var ks = [0, 0, 0]; //specular color
 var ke = [0, 0, 0];
-
 
 //function to extract materials & texture from mtl file
 function parseMTLFile(matFile: String) {
@@ -85,10 +84,15 @@ const uViewMatrixPointer = gl.getUniformLocation(program, "u_view_matrix");
 const uProjectionMatrixPointer = gl.getUniformLocation(program, "u_projection_matrix");
 const uLightDirectPointer = gl.getUniformLocation(program, 'u_light_direction');
 const uLightDiffuse = gl.getUniformLocation(program, 'u_light_diffuse');
+const aLCPointer = gl.getAttribLocation(program, "lc");
+
 
 const vertexNormalAttribute = gl.getAttribLocation(program, 'a_normal');
 const vertexPositionAttribute = gl.getAttribLocation(program, "a_position");
 const colorAttrib = gl.getAttribLocation(program, "a_color");
+
+let normalMatrix = glMatrix.mat3.create();
+let vecLightDirection = [0.0, 8.5, 0.0]
 
 
 gl.enableVertexAttribArray(vertexPositionAttribute);
@@ -96,29 +100,57 @@ gl.enableVertexAttribArray(vertexPositionAttribute);
 // gl.enable(gl.DEPTH_TEST);
 gl.enable(gl.BLEND);
 
-
-
 const CONST_VIEWS: vec3by3 = [0, 0, 0, 0, 0, -1, 0, 1, 0];
 let VIEWS: vec3by3 = CONST_VIEWS;
 
 const CONST_PROJECTION_ARRAY: vec2by3 = [-10, 10, -10, 10, -10, 100];
 let PROJECTION_ARRAY: vec2by3 = CONST_PROJECTION_ARRAY;
 
-let projectionMatrix = mat4.create();
-let viewMatrix = mat4.create();
-mat4.ortho(projectionMatrix, ...PROJECTION_ARRAY);
-mat4.lookAt(viewMatrix, new Float32Array(VIEWS.slice(0, 3)), new Float32Array(VIEWS.slice(3, 6)), new Float32Array(VIEWS.slice(6, 9)));
+let projectionMatrix = glMatrix.mat4.create();
+let viewMatrix = glMatrix.mat4.create();
+glMatrix.mat4.ortho(projectionMatrix, ...PROJECTION_ARRAY);
+glMatrix.mat4.lookAt(viewMatrix, new Float32Array(VIEWS.slice(0, 3)), new Float32Array(VIEWS.slice(3, 6)), new Float32Array(VIEWS.slice(6, 9)));
 gl.uniformMatrix4fv(uViewMatrixPointer, false, new Float32Array(viewMatrix));
 gl.uniformMatrix4fv(uProjectionMatrixPointer, false, new Float32Array(projectionMatrix));
 
 function renderObject(object: ObjectContainer, mtlFile: String) {
+  glMatrix.mat3.normalFromMat4(normalMatrix, object.modelMatrix);    // get normal matrix from modelmatrix
+  let LCArray = [];
+
+  let corrected_normal_vector = glMatrix.vec3.create();
+  let normalized_corrected_normal = glMatrix.vec3.create();
+  let normalized_u_light_direction = glMatrix.vec3.create();
+  let negate_u_light_direction = glMatrix.vec3.create();
+  let tempLam = 0.0;
+  for( var i = 0; i < object.mesh.vertexNormals.length; i+=3){
+    correctNormal(corrected_normal_vector, normalMatrix, [object.mesh.vertexNormals[i],object.mesh.vertexNormals[i+1],object.mesh.vertexNormals[i+2]]);
+
+    glMatrix.vec3.normalize(normalized_corrected_normal, corrected_normal_vector);
+    glMatrix.vec3.normalize(normalized_u_light_direction, [vecLightDirection[0],vecLightDirection[1],vecLightDirection[2]]);
+
+    glMatrix.vec3.negate(negate_u_light_direction, normalized_u_light_direction);
+
+    tempLam = glMatrix.vec3.dot(negate_u_light_direction, normalized_corrected_normal);
+    var lambertCoeff = Math.max(tempLam, 0.0);
+
+    LCArray.push(lambertCoeff);
+    LCArray.push(lambertCoeff);
+    LCArray.push(lambertCoeff);
+
+  }
+  let LcBuffer = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, LcBuffer);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(LCArray), gl.STATIC_DRAW);
+
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(LCArray), gl.STATIC_DRAW);
+  gl.vertexAttribPointer(aLCPointer, 1, gl.FLOAT, false, 0, 0);
+  gl.enableVertexAttribArray(aLCPointer);
   parseMTLFile(mtlFile);
 
   gl.uniformMatrix4fv(uModelMatrixPointer, false, new Float32Array(object.modelMatrix));
 
-  gl.uniform3f(uLightDirectPointer, 1.0, 1.0, 1.0);
+  gl.uniform3f(uLightDirectPointer, vecLightDirection[0],vecLightDirection[1],vecLightDirection[2]);
   gl.uniform3f(uLightDiffuse, ka[0], ka[1], ka[2]);
-
   // now to render the mesh
   gl.bindBuffer(gl.ARRAY_BUFFER, object.mesh.vertexBuffer);
   gl.vertexAttribPointer(vertexPositionAttribute, object.mesh.vertexBuffer.itemSize, gl.FLOAT, false, 0, 0);
@@ -244,3 +276,17 @@ function requestAnimate() {
 }
 
 window.addEventListener('keydown', handleUserKeyPress);
+
+function correctNormal(outMat: glMatrix.vec3, tempMat: glMatrix.mat3, tempVec: glMatrix.vec3) {
+  var bx = tempVec[0],
+      by = tempVec[1],
+      bz = tempVec[2]
+
+  for (var i = 0; i < 3; i++) {
+      var ax = tempMat[i],
+          ay = tempMat[i + 3],
+          az = tempMat[i + 6]
+      outMat[i] = (ax * bx) + (ay * by) + (az * bz);
+  }
+  return outMat;
+}

@@ -9,6 +9,7 @@ uniform mat4 u_projection_matrix;
  in vec3 a_normal;
  uniform vec3 u_light_direction;
  uniform vec3 u_light_diffuse;
+ in float lc;
 
 in vec4 a_color; //attribute vec4 a_color;
 out vec4 v_color; //varying vec4 v_color;
@@ -23,12 +24,12 @@ void main() {
     //v_color = a_color;
 
     //vec3 corrected_a_normal = vec3(gl_Position * vec4(a_normal, 1.0));
-   // vec3 normalized_a_normal = normalize(corrected_a_normal);
-    vec3 normalized_u_light_direction = normalize(u_light_direction);
-    float lambert_coefficient = dot(-normalized_u_light_direction, a_normal);
-    lambert_coefficient = max(lambert_coefficient, 0.0);
-    vec3 diffuse_color =  lambert_coefficient * vec3( vec4(u_light_diffuse, 1.0) * a_color);
-    v_color = a_color * vec4(diffuse_color,1.0);
+   // vec3 normalized_a_normal = normalize(a_normal);
+    //vec3 normalized_u_light_direction = normalize(u_light_direction);
+    //float lambert_coefficient = dot(-normalized_u_light_direction, corrected_a_normal);
+   // lambert_coefficient = max(lambert_coefficient, 0.0);
+    vec3 diffuse_color =  lc * vec3( vec4(u_light_diffuse, 1.0) * a_color);
+    v_color = vec4(diffuse_color,1.0);
    
     
 }
