@@ -181,19 +181,7 @@ const requestAnimationFrame =
 const cancelAnimationFrame =
   window.cancelAnimationFrame
 
-// objects
-import gourd from './objects/gourd.obj?raw';
-import kyub from './objects/cube.obj?raw';
-import donut from './objects/donut.obj?raw';
-import bdaycake from './objects/bday_cake.obj?raw';
-import pizza from './objects/pizza.obj?raw';
-import strawberry from './objects/strawberry.obj?raw';
-import strawberryMtl from './objects/strawberry.mtl?raw';
-import icecream from './objects/icecream.obj?raw';
-import icecreamMtl from './objects/icecream.mtl?raw';
-
 let animation: number;
-let model: ObjectContainer = new ObjectContainer(gl, gourd);
 
 let ObjectList: ObjectContainer[] = [];
 let mtlList: String[] = [];
