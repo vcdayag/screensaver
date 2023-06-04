@@ -24,3 +24,21 @@ npm install
 ```
 npm run dev
 ```
+## Title of Artwork
+###  Description of Artwork
+## Group Members and Section
+- Dayag, Van Paul 
+- Dalangin, Martin Ivan
+- Evangelista, Lae Nicole 
+- Miranda, Myka Ricci 
+- Pascual, Jemimah Lorelai 
+
+## Dependencies
+1.  gl-matrix
+    * package containing functions designed to perform vertex and matrix operations.
+2. webgl-obj-loader
+    * A simple script to allow easy importing of object files to web.
+
+## How to Run
+## Parameters, Explained
+## Interactions, Explained
