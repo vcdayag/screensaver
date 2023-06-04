@@ -44,7 +44,6 @@ function parseMTLFile(matFile: String) {
   }
 }
 
-
 function createShader(gl: WebGLRenderingContext, type: number, sourceCode: string): WebGLShader {
   // Compiles either a shader of type gl.VERTEX_SHADER or gl.FRAGMENT_SHADER
   var shader = gl.createShader(type)!;
@@ -61,7 +60,6 @@ function createShader(gl: WebGLRenderingContext, type: number, sourceCode: strin
 let canvas = document.querySelector<HTMLCanvasElement>('#screensaver')!;
 canvas.height = window.screen.height;
 canvas.width = window.screen.width;
-
 
 const gl = canvas.getContext('webgl2')!;
 let program = gl.createProgram()!;
@@ -122,7 +120,6 @@ function renderObject(object: ObjectContainer, mtlFile: String) {
 
   parseMTLFile(mtlFile);
 
-
   gl.uniformMatrix4fv(uModelMatrixPointer, false, new Float32Array(object.modelMatrix));
 
   gl.uniform3f(uLightDirectPointer, vecLightDirection[0],vecLightDirection[1],vecLightDirection[2]);
@@ -136,9 +133,7 @@ function renderObject(object: ObjectContainer, mtlFile: String) {
   gl.bindBuffer(gl.ARRAY_BUFFER, object.mesh.normalBuffer);
   gl.vertexAttribPointer(vertexNormalAttribute, object.mesh.normalBuffer.itemSize, gl.FLOAT, false, 0, 0);
 
-
   gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, object.mesh.indexBuffer);
-  gl.vertexAttribPointer(vertexPositionAttribute, object.mesh.vertexBuffer.itemSize, gl.FLOAT, false, 0, 0);
   gl.drawElements(gl.TRIANGLES, object.mesh.indexBuffer.numItems, gl.UNSIGNED_SHORT, 0);
 
   gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
@@ -147,12 +142,12 @@ function renderObject(object: ObjectContainer, mtlFile: String) {
 }
 
 function renderAll(objarray: ObjectContainer[], mtlArray: String[]) {
-
   // TODO translate back to top for optimization
+
   //clear screen
   gl.clearColor(0.8, 0.8, 0.8, 1.0);
   gl.clear(gl.COLOR_BUFFER_BIT);
-  
+
   // render objects
   for (let index = 0; index < objarray.length; index++) {
     let rotatevalue = (Math.PI / 64) + index * 0.1;
@@ -176,17 +171,17 @@ function renderAll(objarray: ObjectContainer[], mtlArray: String[]) {
     element.fall();
     renderObject(element, materials);
 
-
   }
 }
 
 import { ObjectContainer } from './ObjectContainer';
-let animation: number;
 
 const requestAnimationFrame =
   window.requestAnimationFrame
 const cancelAnimationFrame =
   window.cancelAnimationFrame
+
+let animation: number;
 
 let ObjectList: ObjectContainer[] = [];
 let mtlList: String[] = [];
@@ -200,6 +195,7 @@ for(var index = 0; index < 3; index ++){
     mtlList.push(file);
   })
 }
+
 
 // Catch user inputs
 let direction = 0;
@@ -230,7 +226,6 @@ renderAll(ObjectList, mtlList);
 
 function requestAnimate() {
   renderAll(ObjectList, mtlList);
-
   // recursive call
   animation = requestAnimationFrame(requestAnimate);
 }
