@@ -139,7 +139,6 @@ function renderObject(object: ObjectContainer, mtlFile: String) {
 
   gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, object.mesh.indexBuffer);
   gl.vertexAttribPointer(vertexPositionAttribute, object.mesh.vertexBuffer.itemSize, gl.FLOAT, false, 0, 0);
-  gl.vertexAttrib4f(col, objectColor[0],objectColor[1],objectColor[2],objectColor[3]); 
   gl.drawElements(gl.TRIANGLES, object.mesh.indexBuffer.numItems, gl.UNSIGNED_SHORT, 0);
 
   gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
@@ -150,7 +149,6 @@ function renderObject(object: ObjectContainer, mtlFile: String) {
 function renderAll(objarray: ObjectContainer[], mtlArray: String[]) {
 
   // TODO translate back to top for optimization
-  const objcol = colors.concat(colors,colors);
   //clear screen
   gl.clearColor(0.8, 0.8, 0.8, 1.0);
   gl.clear(gl.COLOR_BUFFER_BIT);
@@ -182,14 +180,13 @@ function renderAll(objarray: ObjectContainer[], mtlArray: String[]) {
   }
 }
 
+import { ObjectContainer } from './ObjectContainer';
 let animation: number;
 
 const requestAnimationFrame =
   window.requestAnimationFrame
 const cancelAnimationFrame =
   window.cancelAnimationFrame
-
-let animation: number;
 
 let ObjectList: ObjectContainer[] = [];
 let mtlList: String[] = [];
