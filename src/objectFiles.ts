@@ -24,6 +24,7 @@ export const RawObjects = [
 export const mtlFiles = [
     icecreamMtl,
     strawberryMtl,
+
 ];
 
 export const objectColors = [

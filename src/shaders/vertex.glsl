@@ -26,6 +26,7 @@ void main() {
     
     vec4 normalFace = u_view_matrix * u_model_matrix * vec4(a_normal,1.0);
 
+
     vec3 corrected_a_normal = vec3(u_normal_matrix * vec3(normalFace));
     vec3 normalized_a_normal = normalize(corrected_a_normal);
     vec3 normalized_u_light_direction = normalize(u_light_direction);
