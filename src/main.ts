@@ -3,12 +3,12 @@ import vertexShaderSourceCode from './shaders/vertex.glsl?raw';
 import fragmentShaderSourceCode from './shaders/fragment.glsl?raw';
 import * as glMatrix from 'gl-matrix';
 import { vec2by3, vec3by3 } from './types';
-import {RawObjects, mtlFiles} from './objectFiles';
+import { RawObjects, mtlFiles } from './objectFiles';
 
 //obj materials
 var ns: number, ni: number, d: number, illum: number;
 var ka = [0, 0, 0]; //ambient color
-var kd = [0 ,0, 0]; //diffuse color
+var kd = [0, 0, 0]; //diffuse color
 var ks = [0, 0, 0]; //specular color
 var ke = [0, 0, 0];
 
@@ -25,13 +25,13 @@ function parseMTLFile(matFile: String) {
     } else if (lineSplit[0] == 'Ka' || lineSplit[0] == 'Kd' || lineSplit[0] == 'Ks' || lineSplit[0] == 'Ke') {
       for (var word = 1; word < lineSplit.length; word++) {
         if (lineSplit[0] == 'Ka') {
-          ka[word-1] = (Number(lineSplit[word]));
+          ka[word - 1] = (Number(lineSplit[word]));
         } else if (lineSplit[0] == 'Kd') {
-          kd[word-1]=(Number(lineSplit[word]));
+          kd[word - 1] = (Number(lineSplit[word]));
         } else if (lineSplit[0] == 'Ks') {
-          ks[word-1]=(Number(lineSplit[word]));
+          ks[word - 1] = (Number(lineSplit[word]));
         } else if (lineSplit[0] == 'Ke') {
-          ke[word-1]=(Number(lineSplit[word]));
+          ke[word - 1] = (Number(lineSplit[word]));
         }
       }
     } else if (lineSplit[0] == 'Ni') {
@@ -94,6 +94,59 @@ const colorAttrib = gl.getAttribLocation(program, "a_color");
 let normalMatrix = glMatrix.mat3.create();
 let vecLightDirection = [2.0, 8.5, 1.0]
 
+//light direction
+document.getElementById("xLightRange")?.addEventListener('input', function redraw(event){
+  let sliderValue = Number((document.getElementById('xLightRange') as HTMLInputElement)!.value);
+ 
+  if (sliderValue < -15) {
+    document.getElementById('x_light_value')!.innerHTML = String(-15);
+    vecLightDirection[0] = -15;
+  } else if (sliderValue > 15) {
+    document.getElementById('x_light_value')!.innerHTML = String(15);
+    vecLightDirection[0] = 15;
+  } else {
+    vecLightDirection[0] = sliderValue
+    document.getElementById('x_light_value')!.innerHTML = String(sliderValue);
+  }
+
+  renderAll(ObjectList, mtlList);
+
+});
+document.getElementById("yLightRange")?.addEventListener('input', function redraw(event)
+{
+  let sliderValue = Number((document.getElementById('yLightRange') as HTMLInputElement)!.value);
+  if (sliderValue < -15) {
+    document.getElementById('y_light_value')!.innerHTML = String(-15);
+    vecLightDirection[1] = -15;
+  } else if (sliderValue > 15) {
+    document.getElementById('y_light_value')!.innerHTML = String(15);
+    vecLightDirection[1] = 15;
+  } else {
+    vecLightDirection[1] = sliderValue
+    document.getElementById('y_light_value')!.innerHTML = String(sliderValue);
+  }
+
+  renderAll(ObjectList, mtlList);
+
+});
+document.getElementById("zLightRange")?.addEventListener('input', function redraw(event)
+{
+  let sliderValue = Number((document.getElementById('zLightRange') as HTMLInputElement)!.value);
+
+  if (sliderValue < -15) {
+    document.getElementById('z_light_value')!.innerHTML = String(-15);
+    vecLightDirection[2] = -15;
+  } else if (sliderValue > 15) {
+    document.getElementById('z_light_value')!.innerHTML = String(15);
+    vecLightDirection[2] = 15;
+  } else {
+    vecLightDirection[2] = sliderValue
+    document.getElementById('z_light_value')!.innerHTML = String(sliderValue);
+  }
+
+  renderAll(ObjectList, mtlList);
+
+});
 
 gl.enableVertexAttribArray(vertexPositionAttribute);
 
@@ -122,7 +175,7 @@ function renderObject(object: ObjectContainer, mtlFile: String) {
 
   gl.uniformMatrix4fv(uModelMatrixPointer, false, new Float32Array(object.modelMatrix));
 
-  gl.uniform3f(uLightDirectPointer, vecLightDirection[0],vecLightDirection[1],vecLightDirection[2]);
+  gl.uniform3f(uLightDirectPointer, vecLightDirection[0], vecLightDirection[1], vecLightDirection[2]);
   gl.uniform3f(uLightDiffuse, ka[0], ka[1], ka[2]);
   // now to render the mesh
   gl.bindBuffer(gl.ARRAY_BUFFER, object.mesh.vertexBuffer);
@@ -186,12 +239,12 @@ let animation: number;
 let ObjectList: ObjectContainer[] = [];
 let mtlList: String[] = [];
 
-for(var index = 0; index < 3; index ++){
-  RawObjects.forEach(obj =>{
+for (var index = 0; index < 3; index++) {
+  RawObjects.forEach(obj => {
     ObjectList.push(new ObjectContainer(gl, obj));
   })
 
-  mtlFiles.forEach(file =>{
+  mtlFiles.forEach(file => {
     mtlList.push(file);
   })
 }
