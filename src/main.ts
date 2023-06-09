@@ -60,6 +60,7 @@ function createShader(gl: WebGLRenderingContext, type: number, sourceCode: strin
 let canvas = document.querySelector<HTMLCanvasElement>('#screensaver')!;
 canvas.height = window.screen.height;
 canvas.width = window.screen.width;
+canvas.style.background = "blue";
 
 const gl = canvas.getContext('webgl2')!;
 let program = gl.createProgram()!;
@@ -108,10 +109,12 @@ let PROJECTION_ARRAY: vec2by3 = CONST_PROJECTION_ARRAY;
 
 let projectionMatrix = glMatrix.mat4.create();
 let viewMatrix = glMatrix.mat4.create();
+let modelMatrix = glMatrix.mat4.create();
 glMatrix.mat4.ortho(projectionMatrix, ...PROJECTION_ARRAY);
 glMatrix.mat4.lookAt(viewMatrix, new Float32Array(VIEWS.slice(0, 3)), new Float32Array(VIEWS.slice(3, 6)), new Float32Array(VIEWS.slice(6, 9)));
 gl.uniformMatrix4fv(uViewMatrixPointer, false, new Float32Array(viewMatrix));
 gl.uniformMatrix4fv(uProjectionMatrixPointer, false, new Float32Array(projectionMatrix));
+
 
 function renderObject(object: ObjectContainer, mtlFile: String) {
   glMatrix.mat3.normalFromMat4(normalMatrix, object.modelMatrix);    // get normal matrix from modelmatrix
@@ -162,6 +165,7 @@ function renderAll(objarray: ObjectContainer[], mtlArray: String[]) {
         element.rotateY(rotatevalue);
         break;
       case 2:
+        
         element.rotateZ(rotatevalue);
         break;
 
@@ -203,15 +207,20 @@ const handleUserKeyPress = (event: KeyboardEvent) => {
   const { key } = event;
   switch (key) {
     case "ArrowUp":
+      console.log("up")
       direction = 0;
       break;
     case "ArrowDown":
+      console.log("down")
       direction = 1;
       break;
     case "ArrowLeft":
+      glMatrix.mat4.translate(modelMatrix, modelMatrix, [-0.5,1,0])
+      console.log("left");
       direction = 2;
       break;
     case "ArrowRight":
+      requestAnimate();
       break;
     case "Escape":
       cancelAnimationFrame(animation);
@@ -229,5 +238,7 @@ function requestAnimate() {
   // recursive call
   animation = requestAnimationFrame(requestAnimate);
 }
+
+requestAnimate()
 
 window.addEventListener('keydown', handleUserKeyPress);
