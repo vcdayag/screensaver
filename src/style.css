@@ -1,0 +1,14 @@
+
+#whole-page{
+    position: relative;
+}
+#screensaver{
+    position: absolute;
+    z-index: 1;
+ 
+}
+
+#menu{
+    position: absolute;
+    z-index: 2;
+}
