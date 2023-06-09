@@ -19,8 +19,6 @@ void main() {
     // gl_Position = u_projection_matrix * u_transformation_matrix * u_view_matrix * u_model_matrix * a_position;
     gl_Position = u_projection_matrix * u_view_matrix * u_model_matrix * vec4(a_position,1.0);
 
-    gl_PointSize = 0.0;
-
     vec3 newPos = vec3(gl_Position);
     vec3 u_light_direction = light_position - newPos;
     

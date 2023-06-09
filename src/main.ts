@@ -188,16 +188,18 @@ function renderObject(object: ObjectContainer, mtlFile: String) {
   gl.bindBuffer(gl.ARRAY_BUFFER, object.mesh.vertexBuffer);
   gl.vertexAttribPointer(vertexPositionAttribute, object.mesh.vertexBuffer.itemSize, gl.FLOAT, false, 0, 0);
 
-  gl.vertexAttrib4f(colorAttrib, kd[0], kd[1], kd[2], 1);
+  gl.bindBuffer(gl.ARRAY_BUFFER, null);
+  gl.vertexAttrib4f(colorAttrib, kd[0], kd[1], kd[2],1);
 
   gl.bindBuffer(gl.ARRAY_BUFFER, object.mesh.normalBuffer);
-  gl.vertexAttribPointer(vertexNormalAttribute, object.mesh.normalBuffer.itemSize, gl.FLOAT, false, 0, 0);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(object.mesh.vertexNormals),gl.STATIC_DRAW);
+  gl.vertexAttribPointer(vertexNormalAttribute, 3, gl.FLOAT, false, 4 * 3, 0);
 
+  gl.enableVertexAttribArray(vertexNormalAttribute);
   gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, object.mesh.indexBuffer);
   gl.drawElements(gl.TRIANGLES, object.mesh.indexBuffer.numItems, gl.UNSIGNED_SHORT, 0);
 
-  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
-  gl.bindBuffer(gl.ARRAY_BUFFER, null);
+ 
 
 }
 
