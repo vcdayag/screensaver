@@ -189,7 +189,7 @@ function renderObject(object: ObjectContainer, mtlFile: String) {
   gl.vertexAttribPointer(vertexPositionAttribute, object.mesh.vertexBuffer.itemSize, gl.FLOAT, false, 0, 0);
 
   gl.bindBuffer(gl.ARRAY_BUFFER, null);
-  gl.vertexAttrib4f(colorAttrib, kd[0], kd[1], kd[2],1);
+  gl.vertexAttrib4f(colorAttrib, kd[0], kd[1], kd[2], 1);
 
   gl.bindBuffer(gl.ARRAY_BUFFER, object.mesh.normalBuffer);
   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(object.mesh.vertexNormals),gl.STATIC_DRAW);

@@ -30,7 +30,7 @@ void main() {
     vec3 normalized_u_light_direction = normalize(u_light_direction);
     float lambert_coefficient = dot(-normalized_u_light_direction, normalized_a_normal);
     lambert_coefficient = max(lambert_coefficient, 0.0);
-    vec3 diffuse_color =  vec3( vec4(u_light_diffuse, 1.0) * a_color * lambert_coefficient);
+    vec3 diffuse_color =  vec3( vec4(u_light_diffuse,1) * a_color * lambert_coefficient);
     v_color = vec4(diffuse_color,1.0);
    
     
