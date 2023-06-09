@@ -15,6 +15,7 @@ var darkThemeCol = [0.082,0.133,0.22]
 var lightThemeCol = [0.8,0.8,0.8]
 var theme = [0.8,0.8,0.8]
 
+
 //function to extract materials & texture from mtl file
 function parseMTLFile(matFile: String) {
   var matFileSplit = matFile.split('\n');
@@ -263,19 +264,19 @@ const handleUserKeyPress = (event: KeyboardEvent) => {
   const { key } = event;
   if (event.key == "t"){
     if (theme[0]==lightThemeCol[0]){
-      console.log("right");
       theme = darkThemeCol;
+      document.getElementById("menu")!.style.color = "white";
     }
-    else if (theme[0]==darkThemeCol[0])
+    else if (theme[0]==darkThemeCol[0]){
       theme = lightThemeCol;
+      document.getElementById("menu")!.style.color = "black";
+    }
   }
   switch (key) {
     case "ArrowUp":
-      console.log("up")
       direction = 0;
       break;
     case "ArrowDown":
-      console.log("down")
       direction = 1;
       break;
     case "ArrowLeft":
@@ -292,6 +293,7 @@ const handleUserKeyPress = (event: KeyboardEvent) => {
     
   }
   renderAll(ObjectList, mtlList);
+
 }
 
 renderAll(ObjectList, mtlList);

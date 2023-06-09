@@ -11,4 +11,5 @@
 #menu{
     position: absolute;
     z-index: 2;
+    color: black;
 }
