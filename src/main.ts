@@ -11,6 +11,9 @@ var ka = [0, 0, 0]; //ambient color
 var kd = [0 ,0, 0]; //diffuse color
 var ks = [0, 0, 0]; //specular color
 var ke = [0, 0, 0];
+var darkThemeCol = [0.082,0.133,0.22]
+var lightThemeCol = [0.8,0.8,0.8]
+var theme = [0.8,0.8,0.8]
 
 //function to extract materials & texture from mtl file
 function parseMTLFile(matFile: String) {
@@ -60,7 +63,7 @@ function createShader(gl: WebGLRenderingContext, type: number, sourceCode: strin
 let canvas = document.querySelector<HTMLCanvasElement>('#screensaver')!;
 canvas.height = window.screen.height;
 canvas.width = window.screen.width;
-canvas.style.background = "blue";
+
 
 const gl = canvas.getContext('webgl2')!;
 let program = gl.createProgram()!;
@@ -148,7 +151,7 @@ function renderAll(objarray: ObjectContainer[], mtlArray: String[]) {
   // TODO translate back to top for optimization
 
   //clear screen
-  gl.clearColor(0.8, 0.8, 0.8, 1.0);
+  gl.clearColor(theme[0],theme[1],theme[2], 1.0);
   gl.clear(gl.COLOR_BUFFER_BIT);
 
   // render objects
@@ -205,6 +208,14 @@ for(var index = 0; index < 3; index ++){
 let direction = 0;
 const handleUserKeyPress = (event: KeyboardEvent) => {
   const { key } = event;
+  if (event.key == "t"){
+    if (theme[0]==lightThemeCol[0]){
+      console.log("right");
+      theme = darkThemeCol;
+    }
+    else if (theme[0]==darkThemeCol[0])
+      theme = lightThemeCol;
+  }
   switch (key) {
     case "ArrowUp":
       console.log("up")
@@ -216,17 +227,16 @@ const handleUserKeyPress = (event: KeyboardEvent) => {
       break;
     case "ArrowLeft":
       glMatrix.mat4.translate(modelMatrix, modelMatrix, [-0.5,1,0])
-      console.log("left");
       direction = 2;
       break;
     case "ArrowRight":
-      requestAnimate();
       break;
     case "Escape":
       cancelAnimationFrame(animation);
       break;
     case " ":
       requestAnimate();
+    
   }
   renderAll(ObjectList, mtlList);
 }
