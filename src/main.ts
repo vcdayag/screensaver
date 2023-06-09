@@ -11,9 +11,9 @@ var ka = [0, 0, 0]; //ambient color
 var kd = [0, 0, 0]; //diffuse color
 var ks = [0, 0, 0]; //specular color
 var ke = [0, 0, 0];
-var darkThemeCol = [0.082,0.133,0.22]
-var lightThemeCol = [0.8,0.8,0.8]
-var theme = [0.8,0.8,0.8]
+var darkThemeCol = [0.082, 0.133, 0.22]
+var lightThemeCol = [0.8, 0.8, 0.8]
+var theme = [0.8, 0.8, 0.8]
 
 
 //function to extract materials & texture from mtl file
@@ -62,8 +62,13 @@ function createShader(gl: WebGLRenderingContext, type: number, sourceCode: strin
 }
 
 let canvas = document.querySelector<HTMLCanvasElement>('#screensaver')!;
-canvas.height = window.screen.height;
-canvas.width = window.screen.width;
+canvas.height = window.innerHeight;
+canvas.width = window.innerWidth;
+
+addEventListener("resize", (event) => {
+  canvas.height = window.innerHeight;
+  canvas.width = window.innerWidth;
+});
 
 
 const gl = canvas.getContext('webgl2')!;
@@ -100,9 +105,9 @@ let normalMatrix = glMatrix.mat3.create();
 let vecLightDirection = [0, -1, -1]
 
 //light direction
-document.getElementById("xLightRange")?.addEventListener('input', function redraw(event){
+document.getElementById("xLightRange")?.addEventListener('input', function redraw(event) {
   let sliderValue = Number((document.getElementById('xLightRange') as HTMLInputElement)!.value);
- 
+
   if (sliderValue < -1) {
     document.getElementById('x_light_value')!.innerHTML = String(-1);
     vecLightDirection[0] = -1;
@@ -117,8 +122,7 @@ document.getElementById("xLightRange")?.addEventListener('input', function redra
   renderAll(ObjectList, mtlList);
 
 });
-document.getElementById("yLightRange")?.addEventListener('input', function redraw(event)
-{
+document.getElementById("yLightRange")?.addEventListener('input', function redraw(event) {
   let sliderValue = Number((document.getElementById('yLightRange') as HTMLInputElement)!.value);
   if (sliderValue < -15) {
     document.getElementById('y_light_value')!.innerHTML = String(-15);
@@ -134,8 +138,7 @@ document.getElementById("yLightRange")?.addEventListener('input', function redra
   renderAll(ObjectList, mtlList);
 
 });
-document.getElementById("zLightRange")?.addEventListener('input', function redraw(event)
-{
+document.getElementById("zLightRange")?.addEventListener('input', function redraw(event) {
   let sliderValue = Number((document.getElementById('zLightRange') as HTMLInputElement)!.value);
 
   if (sliderValue < -15) {
@@ -192,14 +195,14 @@ function renderObject(object: ObjectContainer, mtlFile: String) {
   gl.vertexAttrib4f(colorAttrib, kd[0], kd[1], kd[2], 1);
 
   gl.bindBuffer(gl.ARRAY_BUFFER, object.mesh.normalBuffer);
-  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(object.mesh.vertexNormals),gl.STATIC_DRAW);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(object.mesh.vertexNormals), gl.STATIC_DRAW);
   gl.vertexAttribPointer(vertexNormalAttribute, 3, gl.FLOAT, false, 4 * 3, 0);
 
   gl.enableVertexAttribArray(vertexNormalAttribute);
   gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, object.mesh.indexBuffer);
   gl.drawElements(gl.TRIANGLES, object.mesh.indexBuffer.numItems, gl.UNSIGNED_SHORT, 0);
 
- 
+
 
 }
 
@@ -207,7 +210,7 @@ function renderAll(objarray: ObjectContainer[], mtlArray: String[]) {
   // TODO translate back to top for optimization
 
   //clear screen
-  gl.clearColor(theme[0],theme[1],theme[2], 1.0);
+  gl.clearColor(theme[0], theme[1], theme[2], 1.0);
   gl.clear(gl.COLOR_BUFFER_BIT);
 
   // render objects
@@ -224,7 +227,7 @@ function renderAll(objarray: ObjectContainer[], mtlArray: String[]) {
         element.rotateY(rotatevalue);
         break;
       case 2:
-        
+
         element.rotateZ(rotatevalue);
         break;
 
@@ -264,12 +267,12 @@ for (var index = 0; index < 3; index++) {
 let direction = 0;
 const handleUserKeyPress = (event: KeyboardEvent) => {
   const { key } = event;
-  if (event.key == "t"){
-    if (theme[0]==lightThemeCol[0]){
+  if (event.key == "t") {
+    if (theme[0] == lightThemeCol[0]) {
       theme = darkThemeCol;
       document.getElementById("menu")!.style.color = "white";
     }
-    else if (theme[0]==darkThemeCol[0]){
+    else if (theme[0] == darkThemeCol[0]) {
       theme = lightThemeCol;
       document.getElementById("menu")!.style.color = "black";
     }
@@ -282,7 +285,7 @@ const handleUserKeyPress = (event: KeyboardEvent) => {
       direction = 1;
       break;
     case "ArrowLeft":
-      glMatrix.mat4.translate(modelMatrix, modelMatrix, [-0.5,1,0])
+      glMatrix.mat4.translate(modelMatrix, modelMatrix, [-0.5, 1, 0])
       direction = 2;
       break;
     case "ArrowRight":
@@ -292,7 +295,7 @@ const handleUserKeyPress = (event: KeyboardEvent) => {
       break;
     case " ":
       requestAnimate();
-    
+
   }
   renderAll(ObjectList, mtlList);
 
