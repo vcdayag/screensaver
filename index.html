@@ -1,13 +1,28 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Screen Saver</title>
-  </head>
-  <body>
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Screen Saver</title>
+</head>
+
+<body>
+  <div id="whole-page">
     <canvas id="screensaver"></canvas>
-    <script type="module" src="/src/main.ts"></script>
-  </body>
+    <div id="menu" style="float: left; padding-left: 45px;">
+      <div style="text-align: left;">
+        X-Axis Light Slider: <input type="range" min="-15" max="15" value="1" class="slider" id="xLightRange">
+        <output id="x_light_value" value="1"></output>
+        Y-Axis Light Slider: <input type="range" min="-15" max="15" value="1" class="slider" id="yLightRange">
+        <output id="y_light_value" value="1"></output>
+        Z-Axis Light Slider: <input type="range" min="-15" max="15" value="0" class="slider" id="zLightRange">
+        <output id="z_light_value" value="0"></output>
+      </div>
+    </div>
+  </div>
+  <script type="module" src="/src/main.ts"></script>
+</body>
+
 </html>
