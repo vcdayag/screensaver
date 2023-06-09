@@ -97,18 +97,18 @@ const vertexPositionAttribute = gl.getAttribLocation(program, "a_position");
 const colorAttrib = gl.getAttribLocation(program, "a_color");
 
 let normalMatrix = glMatrix.mat3.create();
-let vecLightDirection = [2.0, 8.5, 1.0]
+let vecLightDirection = [0, -1, -1]
 
 //light direction
 document.getElementById("xLightRange")?.addEventListener('input', function redraw(event){
   let sliderValue = Number((document.getElementById('xLightRange') as HTMLInputElement)!.value);
  
-  if (sliderValue < -15) {
-    document.getElementById('x_light_value')!.innerHTML = String(-15);
-    vecLightDirection[0] = -15;
-  } else if (sliderValue > 15) {
-    document.getElementById('x_light_value')!.innerHTML = String(15);
-    vecLightDirection[0] = 15;
+  if (sliderValue < -1) {
+    document.getElementById('x_light_value')!.innerHTML = String(-1);
+    vecLightDirection[0] = -1;
+  } else if (sliderValue > 1) {
+    document.getElementById('x_light_value')!.innerHTML = String(1);
+    vecLightDirection[0] = 1;
   } else {
     vecLightDirection[0] = sliderValue
     document.getElementById('x_light_value')!.innerHTML = String(sliderValue);
