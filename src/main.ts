@@ -121,12 +121,15 @@ document.getElementById("xLightRange")?.addEventListener('input', function redra
 
 });
 
+document.getElementById("menu")!.style.backgroundColor = `rgb(${theme[0] * 255},${theme[1] * 255},${theme[2] * 255})`;
 let optionsshown = true;
 document.getElementById("hamburger")?.addEventListener('click', () => {
   if (optionsshown) {
     document.getElementById("menu")!.style.visibility = "hidden";
+    document.getElementById("menu")!.style.display = "none";
   } else {
     document.getElementById("menu")!.style.visibility = "visible";
+    document.getElementById("menu")!.style.display = "block";
   }
   optionsshown = !optionsshown;
 });
@@ -280,6 +283,7 @@ const handleUserKeyPress = (event: KeyboardEvent) => {
       theme = lightThemeCol;
       document.getElementById("menu")!.style.color = "black";
     }
+    document.getElementById("menu")!.style.backgroundColor = `rgb(${theme[0] * 255},${theme[1] * 255},${theme[2] * 255})`;
   }
   switch (key) {
     case "ArrowUp":
