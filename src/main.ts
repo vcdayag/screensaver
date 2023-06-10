@@ -221,18 +221,27 @@ let animationplaying = true;
 let direction = 0;
 const handleUserKeyPress = (event: KeyboardEvent) => {
   const { key } = event;
-  if (event.key == "t") {
-    if (theme[0] == lightThemeCol[0]) {
-      theme = darkThemeCol;
-      document.getElementById("menu")!.style.color = "white";
-    }
-    else if (theme[0] == darkThemeCol[0]) {
-      theme = lightThemeCol;
-      document.getElementById("menu")!.style.color = "black";
-    }
-    document.getElementById("menu")!.style.backgroundColor = `rgb(${theme[0] * 255},${theme[1] * 255},${theme[2] * 255})`;
-  }
+  // console.log(key);
   switch (key) {
+    case "=":
+    case "+":
+      const objindex = Math.round(Math.random() * (RawObjects.length - 1));
+      ObjectList.push(new ObjectContainer(gl, RawObjects[objindex][0], undefined, RawObjects[objindex][1]));
+      break;
+    case "-":
+      ObjectList.pop();
+      break;
+    case "t":
+      if (theme[0] == lightThemeCol[0]) {
+        theme = darkThemeCol;
+        document.getElementById("menu")!.style.color = "white";
+      }
+      else if (theme[0] == darkThemeCol[0]) {
+        theme = lightThemeCol;
+        document.getElementById("menu")!.style.color = "black";
+      }
+      document.getElementById("menu")!.style.backgroundColor = `rgb(${theme[0] * 255},${theme[1] * 255},${theme[2] * 255})`;
+      break;
     case "ArrowUp":
       direction = 0;
       break;
