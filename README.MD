@@ -1,6 +1,6 @@
 # Screensaver
 ## Foodie Shower
-###  A screensaver of different interactable falling treats through keyboard presses and sliders. 
+> A screensaver of different interactable falling treats through keyboard presses and sliders. 
 ## Group Members and Section
 CMSC 161 B2L
 
@@ -42,7 +42,7 @@ npm install
 npm run dev
 ```
 
-## Parameters, Explained
+## Parameters
 1. Light Direction
     - the light direction can be adjusted by the user upon adjusting the slider through the click and drag. 
 2. Rotation Direction
@@ -50,7 +50,7 @@ npm run dev
 3. Number of Objects Falling
     - the number of objects rendered can be adjusted by pressing the `-` key for decreasing the number of objects or `+` key for increasing the number of objects rendered.
 
-## Interactions, Explained
+## Interactions
 1. Light and Dark Theme
     - The screensaver has a light theme and dark theme that can be toggled just by clicking the `T` key. 
 2. Pause and Play
