@@ -10,7 +10,7 @@ function getRandomNegative(value: number) {
 }
 
 const rotatingrange = 1 / 64;
-const fallingrange = 0.1;
+const fallingrange = 0.05;
 
 export class ObjectContainer {
   gl: WebGLRenderingContext;
@@ -34,7 +34,7 @@ export class ObjectContainer {
     this.position = [getRandom(5), getRandom(5), getRandom(5)];
     this.quaternion = quat.create();
     this.rotateValue = getRandom(rotatingrange);
-    this.fallingValue = getRandomNegative(fallingrange);
+    this.fallingValue = getRandomNegative(fallingrange) - fallingrange / 8;
 
     if (initialScale) {
       mat4.scale(this.modelMatrix, this.modelMatrix, initialScale);
@@ -44,7 +44,7 @@ export class ObjectContainer {
   objectReset() {
     this.quaternion = quat.create();
     this.rotateValue = getRandom(rotatingrange);
-    this.fallingValue = getRandomNegative(fallingrange);
+    this.fallingValue = getRandomNegative(fallingrange) - fallingrange / 8;
     this.position[0] = getRandom(10);
     this.position[1] = -this.position[1];
     this.position[2] = getRandom(10);
