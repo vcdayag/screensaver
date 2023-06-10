@@ -120,6 +120,17 @@ document.getElementById("xLightRange")?.addEventListener('input', function redra
   renderAll(ObjectList, mtlList);
 
 });
+
+let optionsshown = true;
+document.getElementById("hamburger")?.addEventListener('click', () => {
+  if (optionsshown) {
+    document.getElementById("menu")!.style.visibility = "hidden";
+  } else {
+    document.getElementById("menu")!.style.visibility = "visible";
+  }
+  optionsshown = !optionsshown;
+});
+
 document.getElementById("yLightRange")?.addEventListener('input', function redraw(event) {
   let sliderValue = Number((document.getElementById('yLightRange') as HTMLInputElement)!.value);
   if (sliderValue < -15) {
