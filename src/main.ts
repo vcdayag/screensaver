@@ -215,32 +215,43 @@ for (var index = 0; index < 5; index++) {
   })
 }
 
-let animationplaying = true;
+function addRandomObject() {
+  const objindex = Math.round(Math.random() * (RawObjects.length - 1));
+  ObjectList.push(new ObjectContainer(gl, RawObjects[objindex][0], undefined, RawObjects[objindex][1]));
+}
 
-// Catch user inputs
+function removeRandomObject() {
+  ObjectList.pop();
+}
+
+function changeTheme() {
+  if (theme[0] == lightThemeCol[0]) {
+    theme = darkThemeCol;
+    document.getElementById("menu")!.style.color = "white";
+  }
+  else if (theme[0] == darkThemeCol[0]) {
+    theme = lightThemeCol;
+    document.getElementById("menu")!.style.color = "black";
+  }
+  document.getElementById("menu")!.style.backgroundColor = `rgb(${theme[0] * 255},${theme[1] * 255},${theme[2] * 255})`;
+}
+
+let animationplaying = true;
 let direction = 0;
+// Catch user inputs
 const handleUserKeyPress = (event: KeyboardEvent) => {
   const { key } = event;
   // console.log(key);
   switch (key) {
     case "=":
     case "+":
-      const objindex = Math.round(Math.random() * (RawObjects.length - 1));
-      ObjectList.push(new ObjectContainer(gl, RawObjects[objindex][0], undefined, RawObjects[objindex][1]));
+      addRandomObject();
       break;
     case "-":
-      ObjectList.pop();
+      removeRandomObject();
       break;
     case "t":
-      if (theme[0] == lightThemeCol[0]) {
-        theme = darkThemeCol;
-        document.getElementById("menu")!.style.color = "white";
-      }
-      else if (theme[0] == darkThemeCol[0]) {
-        theme = lightThemeCol;
-        document.getElementById("menu")!.style.color = "black";
-      }
-      document.getElementById("menu")!.style.backgroundColor = `rgb(${theme[0] * 255},${theme[1] * 255},${theme[2] * 255})`;
+      changeTheme();
       break;
     case "ArrowUp":
       direction = 0;
@@ -264,6 +275,18 @@ const handleUserKeyPress = (event: KeyboardEvent) => {
   }
 
 }
+
+canvas.addEventListener('contextmenu', event => event.preventDefault());
+canvas.addEventListener('click', (e) => addRandomObject());
+canvas.addEventListener('touchstart', (e) => {
+  if (e.touches.length == 1) {
+    addRandomObject();
+  } else if (e.touches.length == 2) {
+    removeRandomObject();
+  } else if (e.touches.length == 3) {
+    changeTheme();
+  }
+});
 
 function requestAnimate() {
   renderAll(ObjectList);
