@@ -116,9 +116,6 @@ document.getElementById("xLightRange")?.addEventListener('input', function redra
     vecLightDirection[0] = sliderValue
     document.getElementById('x_light_value')!.innerHTML = String(sliderValue);
   }
-
-  renderAll(ObjectList, mtlList);
-
 });
 
 document.getElementById("menu")!.style.backgroundColor = `rgb(${theme[0] * 255},${theme[1] * 255},${theme[2] * 255})`;
@@ -182,23 +179,21 @@ gl.uniformMatrix4fv(uViewMatrixPointer, false, new Float32Array(viewMatrix));
 gl.uniformMatrix4fv(uProjectionMatrixPointer, false, new Float32Array(projectionMatrix));
 
 
-function renderObject(object: ObjectContainer, mtlFile: String) {
+function renderObject(object: ObjectContainer) {
   glMatrix.mat3.normalFromMat4(normalMatrix, object.modelMatrix);    // get normal matrix from modelmatrix
   gl.uniformMatrix4fv(uProjectionMatrixPointer, false, new Float32Array(projectionMatrix));
   gl.uniformMatrix3fv(uNormalMatrixPointer, false, new Float32Array(normalMatrix));
 
-  parseMTLFile(mtlFile);
-
   gl.uniformMatrix4fv(uModelMatrixPointer, false, new Float32Array(object.modelMatrix));
 
   gl.uniform3f(uLightDirectPointer, vecLightDirection[0], vecLightDirection[1], vecLightDirection[2]);
-  gl.uniform3f(uLightDiffuse, ka[0], ka[1], ka[2]);
+  gl.uniform3f(uLightDiffuse, ...object.materials.ka);
   // now to render the mesh
   gl.bindBuffer(gl.ARRAY_BUFFER, object.mesh.vertexBuffer);
   gl.vertexAttribPointer(vertexPositionAttribute, object.mesh.vertexBuffer.itemSize, gl.FLOAT, false, 0, 0);
 
   gl.bindBuffer(gl.ARRAY_BUFFER, null);
-  gl.vertexAttrib4f(colorAttrib, kd[0], kd[1], kd[2], 1);
+  gl.vertexAttrib4f(colorAttrib, ...object.materials.kd, 1);
 
   gl.bindBuffer(gl.ARRAY_BUFFER, object.mesh.normalBuffer);
   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(object.mesh.vertexNormals), gl.STATIC_DRAW);
@@ -212,7 +207,7 @@ function renderObject(object: ObjectContainer, mtlFile: String) {
 
 }
 
-function renderAll(objarray: ObjectContainer[], mtlArray: String[]) {
+function renderAll(objarray: ObjectContainer[]) {
   // TODO translate back to top for optimization
 
   //clear screen
@@ -223,7 +218,7 @@ function renderAll(objarray: ObjectContainer[], mtlArray: String[]) {
   for (let index = 0; index < objarray.length; index++) {
     let rotatevalue = (Math.PI / 64) + index * 0.1;
     const element = objarray[index];
-    const materials = mtlArray[index];
+    const materials = element.materials;
 
     switch (direction) {
       case 0:
@@ -239,8 +234,7 @@ function renderAll(objarray: ObjectContainer[], mtlArray: String[]) {
         break;
     }
     element.fall();
-    renderObject(element, materials);
-
+    renderObject(element);
   }
 }
 
@@ -254,15 +248,9 @@ const cancelAnimationFrame =
 let animation: number;
 
 let ObjectList: ObjectContainer[] = [];
-let mtlList: String[] = [];
-
-for (var index = 0; index < 3; index++) {
-  RawObjects.forEach(obj => {
-    ObjectList.push(new ObjectContainer(gl, obj));
-  })
-
-  mtlFiles.forEach(file => {
-    mtlList.push(file);
+for (var index = 0; index < 5; index++) {
+  RawObjects.map((obj, index) => {
+    ObjectList.push(new ObjectContainer(gl, obj, undefined, mtlFiles[index]));
   })
 }
 
@@ -308,7 +296,7 @@ const handleUserKeyPress = (event: KeyboardEvent) => {
 }
 
 function requestAnimate() {
-  renderAll(ObjectList, mtlList);
+  renderAll(ObjectList);
   // recursive call
   animation = requestAnimationFrame(requestAnimate);
 }
