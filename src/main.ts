@@ -66,10 +66,8 @@ canvas.height = window.innerHeight;
 canvas.width = window.innerWidth;
 
 addEventListener("resize", (event) => {
-  canvas.height = window.innerHeight;
-  canvas.width = window.innerWidth;
+  window.location.reload();
 });
-
 
 const gl = canvas.getContext('webgl2')!;
 let program = gl.createProgram()!;
