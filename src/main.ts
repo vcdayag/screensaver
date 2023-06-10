@@ -144,8 +144,6 @@ document.getElementById("yLightRange")?.addEventListener('input', function redra
     document.getElementById('y_light_value')!.innerHTML = String(sliderValue);
   }
 
-  renderAll(ObjectList, mtlList);
-
 });
 document.getElementById("zLightRange")?.addEventListener('input', function redraw(event) {
   let sliderValue = Number((document.getElementById('zLightRange') as HTMLInputElement)!.value);
@@ -160,8 +158,6 @@ document.getElementById("zLightRange")?.addEventListener('input', function redra
     vecLightDirection[2] = sliderValue
     document.getElementById('z_light_value')!.innerHTML = String(sliderValue);
   }
-
-  renderAll(ObjectList, mtlList);
 
 });
 
@@ -236,10 +232,8 @@ function renderAll(objarray: ObjectContainer[], mtlArray: String[]) {
         element.rotateY(rotatevalue);
         break;
       case 2:
-
         element.rotateZ(rotatevalue);
         break;
-
       default:
         break;
     }
@@ -271,6 +265,7 @@ for (var index = 0; index < 3; index++) {
   })
 }
 
+let animationplaying = true;
 
 // Catch user inputs
 let direction = 0;
@@ -294,23 +289,21 @@ const handleUserKeyPress = (event: KeyboardEvent) => {
       direction = 1;
       break;
     case "ArrowLeft":
-      glMatrix.mat4.translate(modelMatrix, modelMatrix, [-0.5, 1, 0])
       direction = 2;
       break;
     case "ArrowRight":
       break;
-    case "Escape":
-      cancelAnimationFrame(animation);
-      break;
     case " ":
-      requestAnimate();
-
+      if (!animationplaying) {
+        requestAnimate();
+        animationplaying = true;
+      } else {
+        cancelAnimationFrame(animation);
+        animationplaying = false
+      }
   }
-  renderAll(ObjectList, mtlList);
 
 }
-
-renderAll(ObjectList, mtlList);
 
 function requestAnimate() {
   renderAll(ObjectList, mtlList);
