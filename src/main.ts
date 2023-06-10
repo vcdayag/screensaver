@@ -3,7 +3,7 @@ import vertexShaderSourceCode from './shaders/vertex.glsl?raw';
 import fragmentShaderSourceCode from './shaders/fragment.glsl?raw';
 import * as glMatrix from 'gl-matrix';
 import { vec2by3, vec3by3 } from './types';
-import { RawObjects, mtlFiles } from './objectFiles';
+import { RawObjects } from './objectFiles';
 
 var darkThemeCol = [0.082, 0.133, 0.22]
 var lightThemeCol = [0.8, 0.8, 0.8]
@@ -211,7 +211,7 @@ let animation: number;
 let ObjectList: ObjectContainer[] = [];
 for (var index = 0; index < 5; index++) {
   RawObjects.map((obj, index) => {
-    ObjectList.push(new ObjectContainer(gl, obj, undefined, mtlFiles[index]));
+    ObjectList.push(new ObjectContainer(gl, obj[0], undefined, obj[1]));
   })
 }
 

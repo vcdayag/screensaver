@@ -15,23 +15,13 @@ import swirl from './objects/swirl.obj?raw';
 import swirlMtl from './objects/swirl.mtl?raw';
 
 export const RawObjects = [
-    icecream,
-    strawberry,
-    banana,
-    flan,
-    cake,
-    bread,
-    swirl
-];
-
-export const mtlFiles = [
-    icecreamMtl,
-    strawberryMtl,
-    bananaMtl,
-    flanMtl,
-    cakeMtl,
-    breadMtl,
-    swirlMtl
+    [icecream,icecreamMtl],
+    [strawberry,strawberryMtl],
+    [banana,bananaMtl],
+    [flan,flanMtl],
+    [cake,cakeMtl],
+    [bread,breadMtl],
+    [swirl,swirlMtl],
 ];
 
 export const objectColors = [
