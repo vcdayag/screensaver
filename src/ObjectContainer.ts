@@ -9,6 +9,9 @@ function getRandomNegative(value: number) {
   return -1 * Math.random() * value;
 }
 
+const rotatingrange = 1 / 32;
+const fallingrange = 0.2;
+
 export class ObjectContainer {
   gl: WebGLRenderingContext;
   mesh: MeshWithBuffers;
@@ -26,25 +29,25 @@ export class ObjectContainer {
   ) {
     this.gl = gl;
     this.mesh = OBJ.initMeshBuffers(gl, new OBJ.Mesh(objectString));
-    
+
     this.modelMatrix = mat4.create();
     this.position = [getRandom(5), getRandom(5), getRandom(5)];
     this.quaternion = quat.create();
-    this.rotateValue = getRandom(1/16);
-    this.fallingValue = getRandomNegative(0.2);
+    this.rotateValue = getRandom(rotatingrange);
+    this.fallingValue = getRandomNegative(fallingrange);
 
     if (initialScale) {
       mat4.scale(this.modelMatrix, this.modelMatrix, initialScale);
     }
   }
 
-  objectReset(){
+  objectReset() {
     this.quaternion = quat.create();
-    this.rotateValue = getRandom(1/16);
-    this.fallingValue = getRandomNegative(0.2);
+    this.rotateValue = getRandom(rotatingrange);
+    this.fallingValue = getRandomNegative(fallingrange);
     this.position[0] = getRandom(10);
-      this.position[1] = -this.position[1];
-      this.position[2] = getRandom(10);
+    this.position[1] = -this.position[1];
+    this.position[2] = getRandom(10);
   }
 
   rotateX(rotateValue: number) {
@@ -72,5 +75,5 @@ export class ObjectContainer {
     );
   }
 
-  render() {}
+  render() { }
 }
