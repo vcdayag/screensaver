@@ -1,0 +1,13 @@
+# Blender 3.5.1 MTL File: 'strawberry.blend'
+# www.blender.org
+
+newmtl blinn1SG
+Ns 0.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.855818 0.002355 0.000800
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd istockphoto-518498611-612x612.jpg
