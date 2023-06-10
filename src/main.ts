@@ -5,48 +5,9 @@ import * as glMatrix from 'gl-matrix';
 import { vec2by3, vec3by3 } from './types';
 import { RawObjects, mtlFiles } from './objectFiles';
 
-//obj materials
-var ns: number, ni: number, d: number, illum: number;
-var ka = [0, 0, 0]; //ambient color
-var kd = [0, 0, 0]; //diffuse color
-var ks = [0, 0, 0]; //specular color
-var ke = [0, 0, 0];
 var darkThemeCol = [0.082, 0.133, 0.22]
 var lightThemeCol = [0.8, 0.8, 0.8]
 var theme = [0.8, 0.8, 0.8]
-
-
-//function to extract materials & texture from mtl file
-function parseMTLFile(matFile: String) {
-  var matFileSplit = matFile.split('\n');
-
-  //file read per line
-  for (var line = 0; line < matFileSplit.length; line++) {
-    let lineSplit = matFileSplit[line].split(' ');
-
-    if (lineSplit[0] == 'Ns') {
-      ns = Number(lineSplit[1]);
-    } else if (lineSplit[0] == 'Ka' || lineSplit[0] == 'Kd' || lineSplit[0] == 'Ks' || lineSplit[0] == 'Ke') {
-      for (var word = 1; word < lineSplit.length; word++) {
-        if (lineSplit[0] == 'Ka') {
-          ka[word - 1] = (Number(lineSplit[word]));
-        } else if (lineSplit[0] == 'Kd') {
-          kd[word - 1] = (Number(lineSplit[word]));
-        } else if (lineSplit[0] == 'Ks') {
-          ks[word - 1] = (Number(lineSplit[word]));
-        } else if (lineSplit[0] == 'Ke') {
-          ke[word - 1] = (Number(lineSplit[word]));
-        }
-      }
-    } else if (lineSplit[0] == 'Ni') {
-      ni = Number(lineSplit[1]);
-    } else if (lineSplit[0] == 'd') {
-      d = Number(lineSplit[1]);
-    } else if (lineSplit[0] == 'illum') {
-      illum = Number(lineSplit[1]);
-    }
-  }
-}
 
 function createShader(gl: WebGLRenderingContext, type: number, sourceCode: string): WebGLShader {
   // Compiles either a shader of type gl.VERTEX_SHADER or gl.FRAGMENT_SHADER
