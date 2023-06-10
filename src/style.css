@@ -1,18 +1,29 @@
-body{
+body {
     margin: 0;
 }
 
-#whole-page{
+#whole-page {
     position: relative;
 }
-#screensaver{
+
+#screensaver {
     position: absolute;
     z-index: 1;
- 
+
 }
 
-#menu{
+#menu {
+    position: absolute;
+    left: 50px;
+    z-index: 2;
+    color: black;
+}
+
+#hamburger {
+    top: 8px;
+    left: 8px;
     position: absolute;
     z-index: 2;
     color: black;
+    cursor: pointer;
 }
