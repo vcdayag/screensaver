@@ -126,10 +126,8 @@ let optionsshown = true;
 document.getElementById("hamburger")?.addEventListener('click', () => {
   if (optionsshown) {
     document.getElementById("menu")!.style.visibility = "hidden";
-    document.getElementById("menu")!.style.display = "none";
   } else {
     document.getElementById("menu")!.style.visibility = "visible";
-    document.getElementById("menu")!.style.display = "block";
   }
   optionsshown = !optionsshown;
 });

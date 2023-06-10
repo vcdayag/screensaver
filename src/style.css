@@ -1,16 +1,15 @@
 body {
     margin: 0;
-}
-
-#whole-page {
-    position: relative;
+    height: fit-content;
 }
 
 #screensaver {
     z-index: 1;
+    position: absolute;
 }
 
 #menu {
+    position: absolute;
     padding-left: 50px;
     z-index: 2;
     color: black;
@@ -20,7 +19,7 @@ body {
     top: 8px;
     left: 8px;
     position: absolute;
-    z-index: 2;
+    z-index: 100;
     color: black;
     cursor: pointer;
 }
