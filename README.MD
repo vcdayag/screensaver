@@ -1,5 +1,4 @@
-# Screensaver
-## Foodie Shower
+# Foodie Shower
 > A screensaver of different interactable falling treats through keyboard presses and sliders. 
 ## Group Members and Section
 CMSC 161 B2L
