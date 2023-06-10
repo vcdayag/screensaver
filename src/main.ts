@@ -277,7 +277,6 @@ const handleUserKeyPress = (event: KeyboardEvent) => {
 }
 
 canvas.addEventListener('contextmenu', event => event.preventDefault());
-canvas.addEventListener('click', (e) => addRandomObject());
 canvas.addEventListener('touchstart', (e) => {
   if (e.touches.length == 1) {
     addRandomObject();
