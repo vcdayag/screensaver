@@ -211,13 +211,20 @@ let animation: number;
 let ObjectList: ObjectContainer[] = [];
 for (var index = 0; index < 5; index++) {
   RawObjects.map((obj, index) => {
-    ObjectList.push(new ObjectContainer(gl, obj[0], undefined, obj[1]));
+    ObjectList.push(new ObjectContainer(gl, obj[0], obj[1]));
   })
 }
 
 function addRandomObject() {
   const objindex = Math.round(Math.random() * (RawObjects.length - 1));
-  ObjectList.push(new ObjectContainer(gl, RawObjects[objindex][0], undefined, RawObjects[objindex][1]));
+  ObjectList.push(new ObjectContainer(gl, RawObjects[objindex][0], RawObjects[objindex][1]));
+}
+
+function addRandomObjectXY(x: number, y: number) {
+  const xloc = (x / window.innerWidth * 20) - 10;
+  const yloc = (y / window.innerHeight * -20) + 10;
+  const objindex = Math.round(Math.random() * (RawObjects.length - 1));
+  ObjectList.push(new ObjectContainer(gl, RawObjects[objindex][0], RawObjects[objindex][1], [xloc, yloc, 0]));
 }
 
 function removeRandomObject() {
@@ -276,7 +283,6 @@ const handleUserKeyPress = (event: KeyboardEvent) => {
 
 }
 
-canvas.addEventListener('contextmenu', event => event.preventDefault());
 canvas.addEventListener('touchstart', (e) => {
   if (e.touches.length == 1) {
     addRandomObject();
@@ -285,6 +291,21 @@ canvas.addEventListener('touchstart', (e) => {
   } else if (e.touches.length == 3) {
     changeTheme();
   }
+});
+
+// left click
+canvas.addEventListener("click", (e) => {
+  addRandomObjectXY(e.clientX, e.clientY);
+})
+
+// right click
+canvas.addEventListener('contextmenu', (e) => {
+  e.preventDefault();
+});
+
+// middle click
+canvas.addEventListener("auxclick", (e) => {
+  removeRandomObject();
 });
 
 function requestAnimate() {
