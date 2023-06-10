@@ -85,14 +85,18 @@ export class ObjectContainer {
   constructor(
     gl: WebGLRenderingContext,
     objectString: string,
+    mtlFile: string,
+    initialPosition?: [number, number, number],
     initialScale?: [number, number, number],
-    mtlFile?: string
   ) {
     this.gl = gl;
     this.mesh = OBJ.initMeshBuffers(gl, new OBJ.Mesh(objectString));
 
     this.modelMatrix = mat4.create();
     this.position = [getRandom(5), getRandom(5), getRandom(5)];
+    if(initialPosition){
+      this.position = initialPosition;
+    }
     this.quaternion = quat.create();
     this.rotateValue = getRandom(rotatingrange);
     this.fallingValue = getRandomNegative(fallingrange) - fallingrange / 8;
