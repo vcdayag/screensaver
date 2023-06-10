@@ -9,8 +9,8 @@ function getRandomNegative(value: number) {
   return -1 * Math.random() * value;
 }
 
-const rotatingrange = 1 / 32;
-const fallingrange = 0.2;
+const rotatingrange = 1 / 64;
+const fallingrange = 0.1;
 
 export class ObjectContainer {
   gl: WebGLRenderingContext;
