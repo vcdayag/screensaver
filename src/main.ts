@@ -164,7 +164,7 @@ gl.enable(gl.BLEND);
 const CONST_VIEWS: vec3by3 = [0, 0, 0, 0, 0, -1, 0, 1, 0];
 let VIEWS: vec3by3 = CONST_VIEWS;
 
-const CONST_PROJECTION_ARRAY: vec2by3 = [-10, 10, -10, 10, -10, 100];
+const CONST_PROJECTION_ARRAY: vec2by3 = [-10, 10, -10, 10, -100, 100];
 let PROJECTION_ARRAY: vec2by3 = CONST_PROJECTION_ARRAY;
 
 let projectionMatrix = glMatrix.mat4.create();
