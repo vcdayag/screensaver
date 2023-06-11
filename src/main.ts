@@ -192,7 +192,7 @@ function renderObject(object: ObjectContainer) {
 
 }
 
-
+let falldown = true;
 
 // This is a function that renders all objects in objectList wherein renderObject() is called for each object
 function renderAll(objarray: ObjectContainer[]) {
@@ -221,7 +221,7 @@ function renderAll(objarray: ObjectContainer[]) {
       default:
         break;
     }
-    element.fall();    // Causes the elements to proceed in a fall-like motion on the screen
+    element.fall(falldown);    // Causes the elements to proceed in a fall-like motion on the screen
     renderObject(element);    // Renders each element in the objectList
   }
 }
@@ -230,7 +230,7 @@ import { ObjectContainer } from './ObjectContainer';
 
 const requestAnimationFrame =
   window.requestAnimationFrame
-const cancelAnimationFrame =    
+const cancelAnimationFrame =
   window.cancelAnimationFrame
 
 let animation: number;
@@ -255,7 +255,7 @@ function addRandomObjectXY(x: number, y: number) {     // Gets the x and y coord
 }
 
 function removeRandomObject() {     // Removes random object added to objectList
-  ObjectList.pop();    
+  ObjectList.pop();
 }
 
 function changeTheme() {   // Chenges the theme of the screen saver from light theme to dark theme and vice-versa
@@ -277,6 +277,14 @@ const handleUserKeyPress = (event: KeyboardEvent) => {     // handles keyboard i
   const { key } = event;
   // console.log(key);
   switch (key) {
+    case "w":
+    case "W":
+      falldown = false;
+      break;
+    case "s":
+    case "S":
+      falldown = true;
+      break;
     case "=":
     case "+":    // Upon clicking + we add a random object on the screen
       addRandomObject();

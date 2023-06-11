@@ -134,12 +134,20 @@ export class ObjectContainer {
   }
 
   // Simulates the falling motion of the object on the screen
-  fall() {
-    if (this.modelMatrix[13] < -15) {   // If the object has reached the bottom of the window then it resets
-      this.objectReset();
+  fall(falldown: boolean) {
+    if(falldown){
+      if (this.modelMatrix[13] < -15) {   // If the object has reached the bottom of the window then it resets
+        this.objectReset();
+      }
+      // The position of the object is incremented depending on its fallingValue
+      this.position[1] += this.fallingValue;
+    }else{
+      if (this.modelMatrix[13] > 15) {   // If the object has reached the bottom of the window then it resets
+        this.objectReset();
+      }
+      this.position[1] -= this.fallingValue;
     }
 
-    this.position[1] += this.fallingValue;   // The position of the object is incremented depending on its fallingValue
     mat4.fromRotationTranslation(
       this.modelMatrix,
       this.quaternion,
