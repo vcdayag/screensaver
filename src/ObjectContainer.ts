@@ -25,6 +25,7 @@ function parseMTLFile(matFile: String): materialType {
   for (var line = 0; line < matFileSplit.length; line++) {
     let lineSplit = matFileSplit[line].split(' ');
 
+    // reads the Ka, Kd, Ks, and Ke attributes from the mtl file
     if (lineSplit[0] == 'Ns') {
       ns = Number(lineSplit[1]);
     } else if (lineSplit[0] == 'Ka' || lineSplit[0] == 'Kd' || lineSplit[0] == 'Ks' || lineSplit[0] == 'Ke') {
@@ -39,7 +40,7 @@ function parseMTLFile(matFile: String): materialType {
           ke[word - 1] = (Number(lineSplit[word]));
         }
       }
-    } else if (lineSplit[0] == 'Ni') {
+    } else if (lineSplit[0] == 'Ni') {     // Reads the Ni, d, and illum components
       ni = Number(lineSplit[1]);
     } else if (lineSplit[0] == 'd') {
       d = Number(lineSplit[1]);
@@ -48,7 +49,7 @@ function parseMTLFile(matFile: String): materialType {
     }
   }
 
-  return {
+  return {    // Returns the different lighting components
     ns,
     ni,
     d,
@@ -60,7 +61,7 @@ function parseMTLFile(matFile: String): materialType {
   }
 }
 
-function getRandom(value: number) {
+function getRandom(value: number) {   // Gets a random value to set as the rotation value
   return (Math.random() < 0.5 ? -1 : 1) * Math.random() * value;
 }
 
@@ -71,9 +72,11 @@ function getRandomNegative(value: number) {
 const rotatingrange = 1 / 64;
 const fallingrange = 0.05;
 
+// The class ObjectContainer below contains the definition of the object along with its different properties
+
 export class ObjectContainer {
-  gl: WebGLRenderingContext;
-  mesh: MeshWithBuffers;
+  gl: WebGLRenderingContext;      // These are the different attributes for an ObjectContainer
+  mesh: MeshWithBuffers;        
   modelMatrix: mat4;
   quaternion: quat;
   position: vec3;
@@ -82,7 +85,7 @@ export class ObjectContainer {
   fallingValue: number;
   materials: materialType;
 
-  constructor(
+  constructor(   // Constructor for the ObjectContainer
     gl: WebGLRenderingContext,
     objectString: string,
     mtlFile: string,
@@ -90,25 +93,25 @@ export class ObjectContainer {
     initialScale?: [number, number, number],
   ) {
     this.gl = gl;
-    this.mesh = OBJ.initMeshBuffers(gl, new OBJ.Mesh(objectString));
+    this.mesh = OBJ.initMeshBuffers(gl, new OBJ.Mesh(objectString));   // initializes a new MeshBuffer
 
-    this.modelMatrix = mat4.create();
-    this.position = [getRandom(5), getRandom(5), getRandom(5)];
+    this.modelMatrix = mat4.create();   // Each object has its own model mattrix
+    this.position = [getRandom(5), getRandom(5), getRandom(5)];   // Randomizes the position of the object
     if(initialPosition){
       this.position = initialPosition;
     }
     this.quaternion = quat.create();
-    this.rotateValue = getRandom(rotatingrange);
+    this.rotateValue = getRandom(rotatingrange);   // Uses the getRandom() function to randomize the rotation value of an object
     this.fallingValue = getRandomNegative(fallingrange) - fallingrange / 8;
 
-    this.materials = parseMTLFile(mtlFile ?? "");
+    this.materials = parseMTLFile(mtlFile ?? "");   // Sets the lighting and color components of the object
 
     if (initialScale) {
       mat4.scale(this.modelMatrix, this.modelMatrix, initialScale);
     }
   }
 
-  objectReset() {
+  objectReset() {  // Resets the object to fall once again from the top of the screen
     this.quaternion = quat.create();
     this.rotateValue = getRandom(rotatingrange);
     this.fallingValue = getRandomNegative(fallingrange) - fallingrange / 8;
@@ -117,6 +120,7 @@ export class ObjectContainer {
     this.position[2] = getRandom(10);
   }
 
+  // These functions allow an object to rotate either around the x-axis, y-axis, or z-axis
   rotateX(rotateValue: number) {
     quat.rotateX(this.quaternion, this.quaternion, this.rotateValue);
   }
@@ -129,12 +133,13 @@ export class ObjectContainer {
     quat.rotateZ(this.quaternion, this.quaternion, this.rotateValue);
   }
 
+  // Simulates the falling motion of the object on the screen
   fall() {
-    if (this.modelMatrix[13] < -15) {
+    if (this.modelMatrix[13] < -15) {   // If the object has reached the bottom of the window then it resets
       this.objectReset();
     }
 
-    this.position[1] += this.fallingValue;
+    this.position[1] += this.fallingValue;   // The position of the object is incremented depending on its fallingValue
     mat4.fromRotationTranslation(
       this.modelMatrix,
       this.quaternion,
