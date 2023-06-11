@@ -45,7 +45,7 @@ npm run dev
 1. Light Direction
     - the light direction can be adjusted by the user upon adjusting the slider through the click and drag. 
 2. Rotation Direction
-    - the direction of rotation of an object can be adjusted upon user's discretion by pressing the arrow keys of their keyboard. Clicking the `arrow up` key will rotate the objects along the x-axis. The `arrow down` key will rotate the objects along the y-axis. Lastly, the `arrow left` key will rotate the objects along the z-axis.
+    - the direction of rotation of an object can be adjusted upon user's discretion by pressing the arrow keys of their keyboard. Clicking the `arrow up` key will rotate the objects along the x-axis. The `arrow down` key will rotate the objects along the y-axis. the `arrow left` key will rotate the objects along the z-axis. Lastly, the `arrow right` key will roate the objects along the xy-axis.
 3. Number of Objects Falling
     - the number of objects rendered can be adjusted by pressing the `-` key for decreasing the number of objects or `+` key for increasing the number of objects rendered.
 4. Direction of translation/movement of objects
@@ -57,4 +57,6 @@ npm run dev
 2. Pause and Play
     - The screensaver can be paused or played just by pressing the space bar. 
 3. Object Add/Remove Onclick
-    - Screensaver objects can be added on the area where the `left mouse click` is clicked. On the other hand, clicking the `right mouse click` will remove the recently added object. 
+    - Screensaver objects can be added on the area where the `left mouse click` is clicked. On the other hand, clicking the `right mouse click` will remove the recently added object.
+4. Object X axis movement
+    - Object would move to the left when `A` is pressed and would go right when `D` is pressed.
