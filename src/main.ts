@@ -5,6 +5,7 @@ import * as glMatrix from 'gl-matrix';
 import { vec2by3, vec3by3 } from './types';
 import { RawObjects } from './objectFiles';
 
+// These are the different rgb values to use for the light and dark theme
 var darkThemeCol = [0.082, 0.133, 0.22]
 var lightThemeCol = [0.8, 0.8, 0.8]
 var theme = [0.8, 0.8, 0.8]
@@ -22,6 +23,7 @@ function createShader(gl: WebGLRenderingContext, type: number, sourceCode: strin
   return shader;
 }
 
+// Searches for canvas element in html and sets its height and width to the dimensions of the window
 let canvas = document.querySelector<HTMLCanvasElement>('#screensaver')!;
 canvas.height = window.innerHeight;
 canvas.width = window.innerWidth;
@@ -49,6 +51,7 @@ if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
 // set the program created earlier
 gl.useProgram(program);
 
+// Initialize the pointers to the different uniform attributes in our shader
 const uModelMatrixPointer = gl.getUniformLocation(program, "u_model_matrix");
 const uViewMatrixPointer = gl.getUniformLocation(program, "u_view_matrix");
 const uProjectionMatrixPointer = gl.getUniformLocation(program, "u_projection_matrix");
@@ -56,33 +59,37 @@ const uNormalMatrixPointer = gl.getUniformLocation(program, 'u_normal_matrix');
 const uLightDirectPointer = gl.getUniformLocation(program, 'light_position');
 const uLightDiffuse = gl.getUniformLocation(program, 'u_light_diffuse');
 
+// Initialize the pointers to the non-uniform locations
 const vertexNormalAttribute = gl.getAttribLocation(program, 'a_normal');
 const vertexPositionAttribute = gl.getAttribLocation(program, "a_position");
 const colorAttrib = gl.getAttribLocation(program, "a_color");
 
+// Creates the normal matrix to be used to simulate the lambert lighting model
 let normalMatrix = glMatrix.mat3.create();
-let vecLightDirection = [0, -1, -1]
+let vecLightDirection = [0, -1, -1]       // Sets the initial light direction
 
 //light direction
+// x-value of light direction
 document.getElementById("xLightRange")?.addEventListener('input', function redraw(event) {
-  let sliderValue = Number((document.getElementById('xLightRange') as HTMLInputElement)!.value);
+  let sliderValue = Number((document.getElementById('xLightRange') as HTMLInputElement)!.value);    // Gets the value of the x value slider for the light
 
-  if (sliderValue < -1) {
+  if (sliderValue < -1) {     // Make sure that the minimum value for x is only -1
     document.getElementById('x_light_value')!.innerHTML = String(-1);
     vecLightDirection[0] = -1;
-  } else if (sliderValue > 1) {
+  } else if (sliderValue > 1) {   // Make sure that the maximum value for x is only 1
     document.getElementById('x_light_value')!.innerHTML = String(1);
     vecLightDirection[0] = 1;
-  } else {
+  } else {   // Else the the value of x is equal to the value in the slider
     vecLightDirection[0] = sliderValue
     document.getElementById('x_light_value')!.innerHTML = String(sliderValue);
   }
 });
 
+// Adds an event listener to the menu toggle on the upper left of the screensaver
 document.getElementById("menu")!.style.backgroundColor = `rgb(${theme[0] * 255},${theme[1] * 255},${theme[2] * 255})`;
 let optionsshown = true;
 document.getElementById("hamburger")?.addEventListener('click', () => {
-  if (optionsshown) {
+  if (optionsshown) {     // Upon clicking, it hides/unhides the slider options for the lighting
     document.getElementById("menu")!.style.visibility = "hidden";
   } else {
     document.getElementById("menu")!.style.visibility = "visible";
@@ -90,14 +97,15 @@ document.getElementById("hamburger")?.addEventListener('click', () => {
   optionsshown = !optionsshown;
 });
 
+// y-value of the light direction
 document.getElementById("yLightRange")?.addEventListener('input', function redraw(event) {
-  let sliderValue = Number((document.getElementById('yLightRange') as HTMLInputElement)!.value);
-  if (sliderValue < -15) {
+  let sliderValue = Number((document.getElementById('yLightRange') as HTMLInputElement)!.value);     // Gets the value of the y-value from the slider
+  if (sliderValue < -1) {
     document.getElementById('y_light_value')!.innerHTML = String(-15);
-    vecLightDirection[1] = -15;
-  } else if (sliderValue > 15) {
+    vecLightDirection[1] = -1;
+  } else if (sliderValue > 1) {
     document.getElementById('y_light_value')!.innerHTML = String(15);
-    vecLightDirection[1] = 15;
+    vecLightDirection[1] = 1;
   } else {
     vecLightDirection[1] = sliderValue
     document.getElementById('y_light_value')!.innerHTML = String(sliderValue);
@@ -107,12 +115,12 @@ document.getElementById("yLightRange")?.addEventListener('input', function redra
 document.getElementById("zLightRange")?.addEventListener('input', function redraw(event) {
   let sliderValue = Number((document.getElementById('zLightRange') as HTMLInputElement)!.value);
 
-  if (sliderValue < -15) {
+  if (sliderValue < -1) {
     document.getElementById('z_light_value')!.innerHTML = String(-15);
-    vecLightDirection[2] = -15;
-  } else if (sliderValue > 15) {
+    vecLightDirection[2] = -1;
+  } else if (sliderValue > 1) {
     document.getElementById('z_light_value')!.innerHTML = String(15);
-    vecLightDirection[2] = 15;
+    vecLightDirection[2] = 1;
   } else {
     vecLightDirection[2] = sliderValue
     document.getElementById('z_light_value')!.innerHTML = String(sliderValue);
