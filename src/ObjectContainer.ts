@@ -74,6 +74,11 @@ export class ObjectContainer {
     quat.rotateZ(this.quaternion, this.quaternion, this.rotateValue);
   }
 
+  rotateXY(rotateValue: number) {
+    quat.rotateX(this.quaternion, this.quaternion, this.rotateValue);
+    quat.rotateY(this.quaternion, this.quaternion, this.rotateValue);
+  }
+
   // Simulates the falling motion of the object on the screen
   fall(falldown: boolean, xmovement: number) {
     if (falldown) {

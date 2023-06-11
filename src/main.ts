@@ -219,6 +219,9 @@ function renderAll(objarray: ObjectContainer[]) {
       case 2:   // Upon clicking ArrowLeft key
         element.rotateZ(rotatevalue);
         break;
+      case 3:   // Upon clicking ArrowLeft key
+        element.rotateXY(rotatevalue);
+        break;
       default:
         break;
     }
@@ -314,6 +317,7 @@ const handleUserKeyPress = (event: KeyboardEvent) => {     // handles keyboard i
       direction = 2;
       break;
     case "ArrowRight":
+      direction = 3;
       break;
     case " ":   // Upon pressing the space bar we toggle the animation on/off
       if (!animationplaying) {
