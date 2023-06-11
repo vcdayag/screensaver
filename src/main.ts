@@ -193,6 +193,7 @@ function renderObject(object: ObjectContainer) {
 }
 
 let falldown = true;
+let xmovement = 0;
 
 // This is a function that renders all objects in objectList wherein renderObject() is called for each object
 function renderAll(objarray: ObjectContainer[]) {
@@ -221,7 +222,7 @@ function renderAll(objarray: ObjectContainer[]) {
       default:
         break;
     }
-    element.fall(falldown);    // Causes the elements to proceed in a fall-like motion on the screen
+    element.fall(falldown, xmovement);    // Causes the elements to proceed in a fall-like motion on the screen
     renderObject(element);    // Renders each element in the objectList
   }
 }
@@ -277,6 +278,14 @@ const handleUserKeyPress = (event: KeyboardEvent) => {     // handles keyboard i
   const { key } = event;
   // console.log(key);
   switch (key) {
+    case "a":
+    case "A":
+      xmovement -= 0.01;
+      break;
+    case "d":
+    case "D":
+      xmovement += 0.01;
+      break;
     case "w":
     case "W":
       falldown = false;
@@ -352,3 +361,19 @@ requestAnimate()
 
 // Adds the event listener to the window
 window.addEventListener('keydown', handleUserKeyPress);
+window.addEventListener('keyup', (event) => {
+  const { key } = event;
+  // console.log(key);
+  switch (key) {
+    case "a":
+    case "A":
+      xmovement = 0;
+      break;
+    case "d":
+    case "D":
+      xmovement = 0;
+      break;
+    default:
+      break;
+  }
+});
