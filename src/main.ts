@@ -100,11 +100,12 @@ document.getElementById("hamburger")?.addEventListener('click', () => {
 // y-value of the light direction
 document.getElementById("yLightRange")?.addEventListener('input', function redraw(event) {
   let sliderValue = Number((document.getElementById('yLightRange') as HTMLInputElement)!.value);     // Gets the value of the y-value from the slider
-  if (sliderValue < -1) {
-    document.getElementById('y_light_value')!.innerHTML = String(-15);
+
+  if (sliderValue < -1) {   // Make sure that the minimum value possible is only -1
+    document.getElementById('y_light_value')!.innerHTML = String(-1);
     vecLightDirection[1] = -1;
-  } else if (sliderValue > 1) {
-    document.getElementById('y_light_value')!.innerHTML = String(15);
+  } else if (sliderValue > 1) {    // Make sure that the maximum value possible is 1
+    document.getElementById('y_light_value')!.innerHTML = String(1);
     vecLightDirection[1] = 1;
   } else {
     vecLightDirection[1] = sliderValue
@@ -112,14 +113,16 @@ document.getElementById("yLightRange")?.addEventListener('input', function redra
   }
 
 });
-document.getElementById("zLightRange")?.addEventListener('input', function redraw(event) {
-  let sliderValue = Number((document.getElementById('zLightRange') as HTMLInputElement)!.value);
 
-  if (sliderValue < -1) {
-    document.getElementById('z_light_value')!.innerHTML = String(-15);
+// z-value of the light direction
+document.getElementById("zLightRange")?.addEventListener('input', function redraw(event) {
+  let sliderValue = Number((document.getElementById('zLightRange') as HTMLInputElement)!.value);   // Gets the value of the z-value from the slider
+
+  if (sliderValue < -1) {   // Make sure that the minimum value is only -1
+    document.getElementById('z_light_value')!.innerHTML = String(-1);
     vecLightDirection[2] = -1;
-  } else if (sliderValue > 1) {
-    document.getElementById('z_light_value')!.innerHTML = String(15);
+  } else if (sliderValue > 1) {    // Make sure that the maximum value is only 1
+    document.getElementById('z_light_value')!.innerHTML = String(1);
     vecLightDirection[2] = 1;
   } else {
     vecLightDirection[2] = sliderValue
@@ -128,26 +131,33 @@ document.getElementById("zLightRange")?.addEventListener('input', function redra
 
 });
 
+// Enables the pointer for the vertex position
 gl.enableVertexAttribArray(vertexPositionAttribute);
 
-// gl.enable(gl.DEPTH_TEST);
 gl.enable(gl.BLEND);
 
-const CONST_VIEWS: vec3by3 = [0, 0, 0, 0, 0, -1, 0, 1, 0];
+
+const CONST_VIEWS: vec3by3 = [0, 0, 0, 0, 0, -1, 0, 1, 0];    // Array containing the eyepoint, center point, and up vector for view transformations
 let VIEWS: vec3by3 = CONST_VIEWS;
 
-const CONST_PROJECTION_ARRAY: vec2by3 = [-10, 10, -10, 10, -100, 100];
+const CONST_PROJECTION_ARRAY: vec2by3 = [-10, 10, -10, 10, -100, 100];     // Contains the data for the frustrum needed for projection transformation
 let PROJECTION_ARRAY: vec2by3 = CONST_PROJECTION_ARRAY;
 
+// Create the projection, view, and model matrices
 let projectionMatrix = glMatrix.mat4.create();
 let viewMatrix = glMatrix.mat4.create();
 let modelMatrix = glMatrix.mat4.create();
+
+// Use orthographic projection
 glMatrix.mat4.ortho(projectionMatrix, ...PROJECTION_ARRAY);
+// Set the values for the view matrix
 glMatrix.mat4.lookAt(viewMatrix, new Float32Array(VIEWS.slice(0, 3)), new Float32Array(VIEWS.slice(3, 6)), new Float32Array(VIEWS.slice(6, 9)));
+
+// Pass the view matri and projection matrix to the shader
 gl.uniformMatrix4fv(uViewMatrixPointer, false, new Float32Array(viewMatrix));
 gl.uniformMatrix4fv(uProjectionMatrixPointer, false, new Float32Array(projectionMatrix));
 
-
+// Function that renders each object in objectList
 function renderObject(object: ObjectContainer) {
   glMatrix.mat3.normalFromMat4(normalMatrix, object.modelMatrix);    // get normal matrix from modelmatrix
   gl.uniformMatrix4fv(uProjectionMatrixPointer, false, new Float32Array(projectionMatrix));
@@ -155,27 +165,36 @@ function renderObject(object: ObjectContainer) {
 
   gl.uniformMatrix4fv(uModelMatrixPointer, false, new Float32Array(object.modelMatrix));
 
+  // Pass the light direction and ka attributes to the shader
   gl.uniform3f(uLightDirectPointer, vecLightDirection[0], vecLightDirection[1], vecLightDirection[2]);
   gl.uniform3f(uLightDiffuse, ...object.materials.ka);
   // now to render the mesh
-  gl.bindBuffer(gl.ARRAY_BUFFER, object.mesh.vertexBuffer);
+
+  // Read the vertex position attributes from the vertexBuffer of the mesh
+  gl.bindBuffer(gl.ARRAY_BUFFER, object.mesh.vertexBuffer);   // vertexBuffer contains the vertex coordinates
   gl.vertexAttribPointer(vertexPositionAttribute, object.mesh.vertexBuffer.itemSize, gl.FLOAT, false, 0, 0);
 
   gl.bindBuffer(gl.ARRAY_BUFFER, null);
+  // Pass the kd component to the shader
   gl.vertexAttrib4f(colorAttrib, ...object.materials.kd, 1);
 
-  gl.bindBuffer(gl.ARRAY_BUFFER, object.mesh.normalBuffer);
+  // Read the normal vector coordinates from the buffer
+  gl.bindBuffer(gl.ARRAY_BUFFER, object.mesh.normalBuffer);   // normalBuffer contains the vertex normals of the object
   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(object.mesh.vertexNormals), gl.STATIC_DRAW);
   gl.vertexAttribPointer(vertexNormalAttribute, 3, gl.FLOAT, false, 4 * 3, 0);
 
+  // Enable the pointer to the vertex normals
   gl.enableVertexAttribArray(vertexNormalAttribute);
   gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, object.mesh.indexBuffer);
-  gl.drawElements(gl.TRIANGLES, object.mesh.indexBuffer.numItems, gl.UNSIGNED_SHORT, 0);
+  gl.drawElements(gl.TRIANGLES, object.mesh.indexBuffer.numItems, gl.UNSIGNED_SHORT, 0);   // Draw the triangulated version of the object
 
 
 
 }
 
+
+
+// This is a function that renders all objects in objectList wherein renderObject() is called for each object
 function renderAll(objarray: ObjectContainer[]) {
   // TODO translate back to top for optimization
 
@@ -190,20 +209,20 @@ function renderAll(objarray: ObjectContainer[]) {
     const materials = element.materials;
 
     switch (direction) {
-      case 0:
+      case 0:   // Upon clicking ArrowUp key
         element.rotateX(rotatevalue);
         break;
-      case 1:
+      case 1:   // Upon clicking ArrowDown key
         element.rotateY(rotatevalue);
         break;
-      case 2:
+      case 2:   // Upon clicking ArrowLeft key
         element.rotateZ(rotatevalue);
         break;
       default:
         break;
     }
-    element.fall();
-    renderObject(element);
+    element.fall();    // Causes the elements to proceed in a fall-like motion on the screen
+    renderObject(element);    // Renders each element in the objectList
   }
 }
 
@@ -211,35 +230,35 @@ import { ObjectContainer } from './ObjectContainer';
 
 const requestAnimationFrame =
   window.requestAnimationFrame
-const cancelAnimationFrame =
+const cancelAnimationFrame =    
   window.cancelAnimationFrame
 
 let animation: number;
 
 let ObjectList: ObjectContainer[] = [];
-for (var index = 0; index < 5; index++) {
+for (var index = 0; index < 5; index++) {       // This blcok of code pushed each element in RawObjects to the objectList to be rendered
   RawObjects.map((obj, index) => {
     ObjectList.push(new ObjectContainer(gl, obj[0], obj[1]));
   })
 }
 
-function addRandomObject() {
+function addRandomObject() {  // Adds a random object to objectList
   const objindex = Math.round(Math.random() * (RawObjects.length - 1));
   ObjectList.push(new ObjectContainer(gl, RawObjects[objindex][0], RawObjects[objindex][1]));
 }
 
-function addRandomObjectXY(x: number, y: number) {
+function addRandomObjectXY(x: number, y: number) {     // Gets the x and y coordinate where the random object is to be rendered
   const xloc = (x / window.innerWidth * 20) - 10;
   const yloc = (y / window.innerHeight * -20) + 10;
   const objindex = Math.round(Math.random() * (RawObjects.length - 1));
   ObjectList.push(new ObjectContainer(gl, RawObjects[objindex][0], RawObjects[objindex][1], [xloc, yloc, 0]));
 }
 
-function removeRandomObject() {
-  ObjectList.pop();
+function removeRandomObject() {     // Removes random object added to objectList
+  ObjectList.pop();    
 }
 
-function changeTheme() {
+function changeTheme() {   // Chenges the theme of the screen saver from light theme to dark theme and vice-versa
   if (theme[0] == lightThemeCol[0]) {
     theme = darkThemeCol;
     document.getElementById("menu")!.style.color = "white";
@@ -251,24 +270,24 @@ function changeTheme() {
   document.getElementById("menu")!.style.backgroundColor = `rgb(${theme[0] * 255},${theme[1] * 255},${theme[2] * 255})`;
 }
 
-let animationplaying = true;
+let animationplaying = true;   // Flag to determine if the objects should be nimating or not
 let direction = 0;
 // Catch user inputs
-const handleUserKeyPress = (event: KeyboardEvent) => {
+const handleUserKeyPress = (event: KeyboardEvent) => {     // handles keyboard inputs from the user
   const { key } = event;
   // console.log(key);
   switch (key) {
     case "=":
-    case "+":
+    case "+":    // Upon clicking + we add a random object on the screen
       addRandomObject();
       break;
-    case "-":
+    case "-":    // Upon clicking - we remove a random object from the screen
       removeRandomObject();
       break;
-    case "t":
+    case "t":    // Upon clicking t we change the theme from light theme to dark theme and vice-versa
       changeTheme();
       break;
-    case "ArrowUp":
+    case "ArrowUp":   // Pressing the up, down, and left arrow keys changes the direction where the rendered objects rotate
       direction = 0;
       break;
     case "ArrowDown":
@@ -279,7 +298,7 @@ const handleUserKeyPress = (event: KeyboardEvent) => {
       break;
     case "ArrowRight":
       break;
-    case " ":
+    case " ":   // Upon pressing the space bar we toggle the animation on/off
       if (!animationplaying) {
         requestAnimate();
         animationplaying = true;
@@ -324,4 +343,5 @@ function requestAnimate() {
 
 requestAnimate()
 
+// Adds the event listener to the window
 window.addEventListener('keydown', handleUserKeyPress);
