@@ -54,3 +54,5 @@ npm run dev
     - The screensaver has a light theme and dark theme that can be toggled just by clicking the `T` key. 
 2. Pause and Play
     - The screensaver can be paused or played just by pressing the space bar. 
+3. Object Add/Remove Onclick
+    - Screensaver objects can be added on the area where the `left mouse click` is clicked. On the other hand, clicking the `right mouse click` will remove the recently added object. 
