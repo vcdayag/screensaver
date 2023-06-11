@@ -1,4 +1,4 @@
-// objects
+// objects imported from raw obj files from the src/objects folder
 import flan from './objects/flan.obj?raw';
 import flanMtl from './objects/flan.mtl?raw';
 import icecream from './objects/icecream.obj?raw';
@@ -16,6 +16,8 @@ import swirlMtl from './objects/swirl.mtl?raw';
 import cherry from './objects/cherry.obj?raw';
 import cherryMtl from './objects/cherry.mtl?raw';
 
+// These are the array of raw objects to be rendered in the screensaver
+// The first element of each array contains the parsed obj file while the secoond element contains the mtl file to determine the color properties
 export const RawObjects = [
     [icecream,icecreamMtl],
     [strawberry,strawberryMtl],
