@@ -310,10 +310,9 @@ const handleUserKeyPress = (event: KeyboardEvent) => {     // handles keyboard i
 
 }
 
+// touchscreen events
 canvas.addEventListener('touchstart', (e) => {
-  if (e.touches.length == 1) {
-    addRandomObject();
-  } else if (e.touches.length == 2) {
+  if (e.touches.length == 2) {
     removeRandomObject();
   } else if (e.touches.length == 3) {
     changeTheme();
