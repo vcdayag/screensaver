@@ -48,6 +48,8 @@ npm run dev
     - the direction of rotation of an object can be adjusted upon user's discretion by pressing the arrow keys of their keyboard. Clicking the `arrow up` key will rotate the objects along the x-axis. The `arrow down` key will rotate the objects along the y-axis. Lastly, the `arrow left` key will rotate the objects along the z-axis.
 3. Number of Objects Falling
     - the number of objects rendered can be adjusted by pressing the `-` key for decreasing the number of objects or `+` key for increasing the number of objects rendered.
+4. Direction of translation/movement of objects
+    - the direction of translation of an object can be altered by pressing the `s` and `w` key. Pressing the `w` key would cause the objects to move upward while pressing `s` would cause the objects to move downward.
 
 ## Interactions
 1. Light and Dark Theme
