@@ -1,4 +1,3 @@
-import './style.css'
 import vertexShaderSourceCode from './shaders/vertex.glsl?raw';
 import fragmentShaderSourceCode from './shaders/fragment.glsl?raw';
 import * as glMatrix from 'gl-matrix';
@@ -87,7 +86,7 @@ document.getElementById("xLightRange")?.addEventListener('input', function redra
 
 // Adds an event listener to the menu toggle on the upper left of the screensaver
 document.getElementById("menu")!.style.backgroundColor = `rgb(${theme[0] * 255},${theme[1] * 255},${theme[2] * 255})`;
-let optionsshown = true;
+let optionsshown = false;
 document.getElementById("hamburger")?.addEventListener('click', () => {
   if (optionsshown) {     // Upon clicking, it hides/unhides the slider options for the lighting
     document.getElementById("menu")!.style.visibility = "hidden";
