@@ -205,28 +205,26 @@ function renderAll(objarray: ObjectContainer[]) {
 
   // render objects
   for (let index = 0; index < objarray.length; index++) {
-    let rotatevalue = (Math.PI / 64) + index * 0.1;
-    const element = objarray[index];
-    const materials = element.materials;
+    const foodObject = objarray[index];
 
     switch (direction) {
       case 0:   // Upon clicking ArrowUp key
-        element.rotateX(rotatevalue);
+        foodObject.rotateX();
         break;
       case 1:   // Upon clicking ArrowDown key
-        element.rotateY(rotatevalue);
+        foodObject.rotateY();
         break;
       case 2:   // Upon clicking ArrowLeft key
-        element.rotateZ(rotatevalue);
+        foodObject.rotateZ();
         break;
       case 3:   // Upon clicking ArrowLeft key
-        element.rotateXY(rotatevalue);
+        foodObject.rotateXY();
         break;
       default:
         break;
     }
-    element.fall(falldown, xmovement);    // Causes the elements to proceed in a fall-like motion on the screen
-    renderObject(element);    // Renders each element in the objectList
+    foodObject.fall(falldown, xmovement);    // Causes the elements to proceed in a fall-like motion on the screen
+    renderObject(foodObject);    // Renders each element in the objectList
   }
 }
 

@@ -61,20 +61,20 @@ export class ObjectContainer {
     this.position = [...this.initialposition] as vec3;
   }
 
-  // These functions allow an object to rotate either around the x-axis, y-axis, or z-axis
-  rotateX(rotateValue: number) {
+  // These functions allow an object to rotate either around the x-axis, y-axis, z-axis. or xy-axis
+  rotateX() {
     quat.rotateX(this.quaternion, this.quaternion, this.rotateValue);
   }
 
-  rotateY(rotateValue: number) {
+  rotateY() {
     quat.rotateY(this.quaternion, this.quaternion, this.rotateValue);
   }
 
-  rotateZ(rotateValue: number) {
+  rotateZ() {
     quat.rotateZ(this.quaternion, this.quaternion, this.rotateValue);
   }
 
-  rotateXY(rotateValue: number) {
+  rotateXY() {
     quat.rotateX(this.quaternion, this.quaternion, this.rotateValue);
     quat.rotateY(this.quaternion, this.quaternion, this.rotateValue);
   }
@@ -100,6 +100,7 @@ export class ObjectContainer {
     } else if (this.isMovingSideways) {
       // go back to the original x coordinate slowly
       const difference = this.initialposition[0] - this.position[0];
+      // solution so that the object would not repeatedly go left and right
       if (-sidewaysmovement < difference && difference < sidewaysmovement) {
         this.position[0] = this.initialposition[0];
         this.isMovingSideways = false;
