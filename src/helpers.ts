@@ -1,4 +1,4 @@
-export type materialType = {
+export type materialType = {    // Exports the material properties of the object
     ns: number;
     ni: number;
     d: number;

@@ -93,7 +93,7 @@ document.getElementById("hamburger")?.addEventListener('click', () => {
   } else {
     document.getElementById("menu")!.style.visibility = "visible";
   }
-  optionsshown = !optionsshown;
+  optionsshown = !optionsshown;   // The options are hidden upon initial load of the screensaver
 });
 
 // y-value of the light direction
@@ -191,12 +191,11 @@ function renderObject(object: ObjectContainer) {
 
 }
 
-let falldown = true;
-let xmovement = 0;
+let falldown = true;      // Flag that determines if the objects would move upward or downward
+let xmovement = 0;        // Value that determines how much the objects would move sideways
 
 // This is a function that renders all objects in objectList wherein renderObject() is called for each object
 function renderAll(objarray: ObjectContainer[]) {
-  // TODO translate back to top for optimization
 
   //clear screen
   gl.clearColor(theme[0], theme[1], theme[2], 1.0);
@@ -273,24 +272,24 @@ function changeTheme() {   // Chenges the theme of the screen saver from light t
 
 let animationplaying = true;   // Flag to determine if the objects should be nimating or not
 let direction = 0;
+
 // Catch user inputs
 const handleUserKeyPress = (event: KeyboardEvent) => {     // handles keyboard inputs from the user
   const { key } = event;
-  // console.log(key);
   switch (key) {
-    case "a":
+    case "a":           // Pressing the 'a' key would cause the objects to move to the left
     case "A":
       xmovement -= 0.01;
       break;
-    case "d":
+    case "d":           // Pressing the 'd' key would cause the objects to move to the right
     case "D":
       xmovement += 0.01;
       break;
-    case "w":
+    case "w":           // Pressing the 'w' key means that the objects would translate upward
     case "W":
       falldown = false;
       break;
-    case "s":
+    case "s":           // Pressing the 's' key would mean that the objects would translate downward
     case "S":
       falldown = true;
       break;
@@ -362,9 +361,8 @@ requestAnimate()
 
 // Adds the event listener to the window
 window.addEventListener('keydown', handleUserKeyPress);
-window.addEventListener('keyup', (event) => {
+window.addEventListener('keyup', (event) => {         // Handles the instance where the objects slowly return to the center of the screen after releasing 'a' or 'd' key
   const { key } = event;
-  // console.log(key);
   switch (key) {
     case "a":
     case "A":
